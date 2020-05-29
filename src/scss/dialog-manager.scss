@@ -1,0 +1,12 @@
+//@import "../../node_modules/bootstrap-scss/bootstrap";
+//https://getbootstrap.com/docs/4.0/getting-started/theming/#theme-colors
+//@import '../../node_modules/bootstrap-scss/variables';
+
+.custom-checkbox {
+  margin-top: 10px;
+}
+
+// flatpickr のテーマ
+@import "../../node_modules/flatpickr/dist/themes/material_blue.css";
+//@import "../../node_modules/flatpickr/dist/themes/dark.css";
+
