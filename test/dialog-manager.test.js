@@ -1,5 +1,5 @@
 import DialogManager from "../src_lib/lib/dialog-manager";
-import { typeOf } from "../src_lib/lib/common-utils";
+import { typeOf } from "../src/common-utils";
 import bsn from "bootstrap.native/dist/bootstrap-native-v4";
 
 import { SERVER_ENDPOINT, INNER_HTML, loadResourceFromUrl, getFriends, getUserData } from "./test-common.js";
