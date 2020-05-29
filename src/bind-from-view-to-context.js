@@ -14,6 +14,7 @@ import doPopulateDatePickerToContext from './bind-from-view-datepicker-to-contex
 /**
  * 入力Elementから値を取得し指定された型変換を施した結果を返す
  * @param dlgInputEle
+ * @author Tom Misawa <riversun.org@gmail.com> (https://github.com/riversun)
  */
 function getTypedValue(dlgInputEle) {
   // 入力値の型

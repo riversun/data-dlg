@@ -14,6 +14,7 @@ import getListingInputDispDataMap from './view-data-resolver';
  * @param dlgPropInputEle
  * @param rawValue
  * @returns {*}
+ * @author Tom Misawa <riversun.org@gmail.com> (https://github.com/riversun)
  */
 export function getSingleDispOf(dlgPropInputEle, rawValue) {
   // 入力コントロールの入力値がひもづけられるプロパティ名

@@ -28,6 +28,8 @@ import doHandleChoiceEles from './create-html-multi-option-input';
  "cancel"が指定された場合は"onCancel"がコールバックされる。
  --他の値が指定された場合の動作
  "apply"と"cancel"以外の値がセットされたボタンがクリックされた場合は"onAny"がコールバックされる。
+
+ * @author Tom Misawa <riversun.org@gmail.com> (https://github.com/riversun)
  */
 export default class DialogManager {
   constructor() {
@@ -194,7 +196,7 @@ export default class DialogManager {
    * @param dataType
    * @returns {Promise<unknown>}
    */
-  async loadResourceFromUrl(url, dataType, comment) {
+  async loadResourceFromUrl(url, dataType, comment, timeoutMillis) {
     return new Promise((resolve, reject) => {
       if (isFalsy(url)) {
         resolve();
@@ -205,7 +207,7 @@ export default class DialogManager {
         url,
         contentType: 'application/json',
         dataType,
-        timeoutMillis: 5000, // timeout milli-seconds
+        timeoutMillis: timeoutMillis || 5000, // timeout milli-seconds
         success: (response) => {
           // 1回ダウンロードしたらこのダイアログのテンプレートを記憶する
           resolve(response);
@@ -496,23 +498,26 @@ Or if you have an external dialog set to a value, are you giving it a "data-dlg-
           url: dialogUrl,
           contentType: 'text/html',
           dataType: 'text', // data type to parse when receiving response from server
-          timeoutMillis: 5000, // timeout milli-seconds
+          timeoutMillis: 2500, // timeout milli-seconds
           success: async (response) => {
             // Once downloaded, remember template
             dialogModel.template = response;
             await fnShowDialog(response);
           },
-          error: (e) => {
-            console.error(e);
-            alert('Network Error occurred.Please reload the page.ネットワークエラーが発生しました、お手数ですがページリロードをおねがいします');
+          error: async (e) => {
+            const resText = `Network Error occurred.Please reload the page.ネットワークエラーが発生しました、お手数ですがページリロードをおねがいします error=${e}`;
+            // alert('Network Error occurred.Please reload the page.ネットワークエラーが発生しました、お手数ですがページリロードをおねがいします');
+            dialogModel.template = resText;
+            await fnShowDialog(resText);
+            // throw e;
           },
-          timeout: (e) => {
-            console.error(e);
+          timeout: async (e) => {
+            const resText = `Network Timeout Error occurred.Please reload the page.ネットワークタイムアウトエラーが発生しました、お手数ですがページリロードをおねがいします error=${e}`;
+            dialogModel.template = resText;
+            await fnShowDialog(resText);
           },
         });
       }
-    } else {
-      console.error(`No dialog model found for dialogId:"${dialogId}"`);
     }
   }
 

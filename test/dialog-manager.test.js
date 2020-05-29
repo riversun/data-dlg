@@ -56,6 +56,9 @@ describe('DialogManager', () => {
         //削除の確認
         dialogMgr.deleteDialog('dlg-test-1');
         expect(dialogMgr.getDialogModelById('dlg-test-1')).toBeFalsy();
+
+        // re-delete
+        expect(dialogMgr.deleteDialog('dlg-test-1')).toBe(false);
       }
     );//test
   });
@@ -207,6 +210,27 @@ describe('DialogManager', () => {
     );//test
   });
 
+  describe('loadResourceFromUrl()', () => {
+    // ダイアログを表示したあと、ビューに値を入力し値をApplyしたとっきContextに正しく反映されているかを確認する
+    test('default', async (done) => {
+
+      const dialogMgr = createDlgMgr();
+
+
+      await dialogMgr.loadResourceFromUrl(`${SERVER_ENDPOINT}/nothing`, 'json', 'testing', 1000)
+        .catch((err) => {
+          expect(err.message).toContain('Network error. while testing');
+          done();
+        });
+
+      await dialogMgr.loadResourceFromUrl(`${SERVER_ENDPOINT}/timeout`, 'json', 'testing', 1000)
+        .catch((err) => {
+          expect(err.message).toContain('Network timeout error. while testing');
+          done();
+        });
+    });
+  });
+
   describe('setLoadTemplateOnOpen()', () => {
     // ダイアログを表示したあと、ビューに値を入力し値をApplyしたとっきContextに正しく反映されているかを確認する
     test('[dialog1] default', async (done) => {
@@ -313,6 +337,93 @@ describe('DialogManager', () => {
 
       }
     );//test
+
+    test('[dialog1] no url no template error', async (done) => {
+        const userData = getUserData();
+        document.body.innerHTML = INNER_HTML;
+        const dialogMgr = createDlgMgr();
+        //ダイアログを開くときにダイアログのテンプレートHTMLを読み込む
+        dialogMgr.setLoadTemplateOnOpen(true);
+
+        //loadResourceFromUrl
+        const stringsRes = await loadResourceFromUrl(`${SERVER_ENDPOINT}/res/strings.json`, 'json');
+
+        await dialogMgr.setResourcesWithModel(stringsRes);
+        await dialogMgr.createDialog({
+          id: 'dlg-test-1',
+          onCreate: (data) => {
+          },
+          onApply: (data) => {
+          },
+          onCancel: (data) => {
+          },
+        }).catch((err) => {
+          expect(err.message).toContain('template or url property should be specified.')
+          done();
+        });
+
+
+      }
+    );//test
+
+    test('[dialog1] network error', async (done) => {
+        document.body.innerHTML = INNER_HTML;
+        const dialogMgr = createDlgMgr();
+        dialogMgr.setLoadTemplateOnOpen(true);
+        const stringsRes = await loadResourceFromUrl(`${SERVER_ENDPOINT}/res/strings.json`, 'json');
+        await dialogMgr.setResourcesWithModel(stringsRes);
+        await dialogMgr.createDialog({
+          id: 'dlg-test-1',
+          url: `no-server`,
+          onCreate: (data) => {
+            data.dialog.context = {};
+          },
+        });//createDialog
+        dialogMgr.activate();// ダイアログ関連のイベント登録
+        BSN.initCallback();// Bootstrap4のDataAPIを有効化
+        const dialogModel = dialogMgr.getDialogModelById('dlg-test-1');
+        const dialogElement = dialogModel.element;
+        dialogElement.addEventListener('hidden.bs.modal', (e) => {
+        });
+        dialogElement.addEventListener('shown.bs.modal', (e) => {
+          // ビューが表示された
+          expect(dialogElement.innerHTML).toContain('Network Error occurred.Please reload the page');
+          done();
+        });
+        const button1 = document.querySelector('#button1');
+        button1.click();
+      }
+    );//test
+
+    test('[dialog1] network timeout error', async (done) => {
+        document.body.innerHTML = INNER_HTML;
+        const dialogMgr = createDlgMgr();
+        dialogMgr.setLoadTemplateOnOpen(true);
+        const stringsRes = await loadResourceFromUrl(`${SERVER_ENDPOINT}/res/strings.json`, 'json');
+        await dialogMgr.setResourcesWithModel(stringsRes);
+        await dialogMgr.createDialog({
+          id: 'dlg-test-1',
+          url: `${SERVER_ENDPOINT}/timeout`,
+          onCreate: (data) => {
+            data.dialog.context = {};
+          },
+        });//createDialog
+        dialogMgr.activate();// ダイアログ関連のイベント登録
+        BSN.initCallback();// Bootstrap4のDataAPIを有効化
+        const dialogModel = dialogMgr.getDialogModelById('dlg-test-1');
+        const dialogElement = dialogModel.element;
+        dialogElement.addEventListener('hidden.bs.modal', (e) => {
+        });
+        dialogElement.addEventListener('shown.bs.modal', (e) => {
+          // ビューが表示された
+          expect(dialogElement.innerHTML).toContain('Network Timeout Error occurred');
+          done();
+        });
+        const button1 = document.querySelector('#button1');
+        button1.click();
+      }
+    );//test
+
   });
   describe('createDialog()', () => {
 
@@ -378,6 +489,39 @@ describe('DialogManager', () => {
         button1.click();
 
 
+      }
+    );//test
+    test('[dialog1]empty context after onCreate', async () => {
+        document.body.innerHTML = INNER_HTML;
+
+        const dialogMgr = createDlgMgr();
+        await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
+
+        const html = await loadResourceFromUrl(`${SERVER_ENDPOINT}/view/dlg-test-1-general-inputs.html`, 'text');
+
+        // Setup condition input dialog
+        await dialogMgr.createDialog({
+          id: 'dlg-test-1',
+          //template: html
+          url: `${SERVER_ENDPOINT}/view/dlg-test-1-general-inputs.html`,
+          onCreate: (data) => {
+
+
+          },
+          onApply: (data) => {
+          },
+          onCancel: (data) => {
+          },
+
+        }).catch((err) => {
+
+        });
+
+        dialogMgr.activate();// ダイアログ関連のイベント登録
+        BSN.initCallback();// Bootstrap4のDataAPIを有効化
+        expect(() => {
+          dialogMgr.refreshDialog('dlg-test-1');
+        }).toThrowError('context is falsy.');
       }
     );//test
 

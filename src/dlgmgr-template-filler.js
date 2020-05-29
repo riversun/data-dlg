@@ -1,5 +1,8 @@
 import { isTruthy, typeOf } from './common-utils';
 
+/**
+ * @author Tom Misawa <riversun.org@gmail.com> (https://github.com/riversun)
+ */
 export default class DlgmgrTemplateFiller {
   constructor(opt) {
     this.i18res = opt ? opt.i18res : null;
@@ -27,7 +30,6 @@ export default class DlgmgrTemplateFiller {
       let replacementValueFromI18res = null;
       // property context for i18res
       let replacementContextForI18res = null;
-
 
       if (typeOf(replacementFromModel) === 'Object') {
         // オブジェクト{}が指定されていた場合

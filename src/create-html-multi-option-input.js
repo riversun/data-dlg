@@ -9,7 +9,7 @@ import getListingInputDispDataMap from './view-data-resolver';
  * 複数の選択肢表示（単一選択、複数選択肢）用のラベルとして取得し
  * SELECTのoptionまたは複数のcheckbox要素を生成する
  * @param dialogModel
- *
+ * @author Tom Misawa <riversun.org@gmail.com> (https://github.com/riversun)
  *
  */
 export default function doHandleChoiceEles(dialogModel, opt) {

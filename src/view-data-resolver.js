@@ -7,6 +7,7 @@ import { isFalsy } from './common-utils';
  * @param targetEle
  * @param opt
  * @returns {Map<id, dispText>}
+ * @author Tom Misawa <riversun.org@gmail.com> (https://github.com/riversun)
  */
 export default function getListingInputDispDataMap(dialogModel, targetEle, opt) {
   const { context } = dialogModel;
