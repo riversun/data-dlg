@@ -1,4 +1,6 @@
 # data-dlg
+[![CircleCI](https://circleci.com/gh/riversun/data-dlg.svg?style=shield)](https://circleci.com/gh/riversun/data-dlg)
+[![codecov](https://codecov.io/gh/riversun/data-dlg/branch/master/graph/badge.svg)](https://codecov.io/gh/riversun/data-dlg)
 
 data-dlg is data-binder for bsn boosted Bootstrap4 modal dialog.
 
