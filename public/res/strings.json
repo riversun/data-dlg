@@ -1,0 +1,119 @@
+{
+  "en": {
+    "label-title": "Edit information for #{user-name}",
+    "label-comment-first-time": "Start first time registration.",
+    "label-comment-update": "Please edit udpated info.",
+    "label-user-name": "User Name",
+    "label-user-age": "Age",
+    "err-user-age-under": "You're too young, please put your age at least 18.",
+    "err-user-age-over": "You're too old, please put your age under 60.",
+    "label-residence": "Residence(prefecture)",
+    "prefectures": [
+      "Tokyo",
+      "Kanagawa",
+      "Chiba",
+      "Saitama"
+    ],
+    "prefectures-object": [
+      {
+        "id": "pref_tokyo",
+        "name": "Tokyo"
+      },
+      {
+        "id": "pref_kanagawa",
+        "name": "Kanagawa"
+      },
+      {
+        "id": "pref_chiba",
+        "name": "Chiba"
+      },
+      {
+        "id": "pref_saitama",
+        "name": "Saitama"
+      }
+    ],
+    "label-user-hobby": "Hobbies",
+    "hobbies": [
+      "swiming",
+      "golf",
+      "ski",
+      "tennis",
+      "football",
+      "baseball"
+    ],
+    "label-edit": "Edit",
+    "label-ok": "OK",
+    "label-cancel": "Cancel",
+    "label-hobby-edit-dlg-title": "Select hobbies",
+    "label-hobby-edit-explanation": "Please enter a hobby (multiple selections are possible)",
+    "label-birthday": "birthday",
+    "label-wake-up-time": "wake-up-time",
+    "label-work-start-time": "task-start-time",
+    "label-multi-input-title": "Multi Input Example",
+    "label-tel-your-friends": "Tell your friends",
+    "label-tel-your-best-friend": "Tell your best friend",
+    "label-single-input-title": "Single Input Example",
+    "label-single-input-title2": "Single Input Example(from res as model)",
+    "label-tel-your-best-prefecture": "Tell your best prefecture",
+    "label-info-protection": "Enable information protection"
+
+  },
+  "ja": {
+    "label-title": "#{user-name}さんの情報編集画面",
+    "label-comment-first-time": "初回の登録をします",
+    "label-comment-update": "アップデート情報を編集してください",
+    "label-residence": "居住地(県)",
+    "label-user-name": "ユーザー名",
+    "label-user-age": "年齢",
+    "err-user-age-under": "年齢が若すぎます、年齢は18才以上で入れてください。",
+    "err-user-age-over": "年齢が高すぎます、年齢は60才未満で入れてください。",
+    "prefectures": [
+      "東京",
+      "神奈川",
+      "千葉",
+      "埼玉"
+    ],
+    "prefectures-object": [
+      {
+        "id": "pref_tokyo",
+        "name": "東京"
+      },
+      {
+        "id": "pref_kanagawa",
+        "name": "神奈川"
+      },
+      {
+        "id": "pref_chiba",
+        "name": "千葉"
+      },
+      {
+        "id": "pref_saitama",
+        "name": "埼玉"
+      }
+    ],
+    "label-user-hobby": "趣味",
+    "hobbies": [
+      "水泳",
+      "ゴルフ",
+      "スキー",
+      "テニス",
+      "フットボール",
+      "野球"
+    ],
+    "label-edit": "編集",
+    "label-ok": "OK",
+    "label-cancel": "キャンセル",
+    "label-hobby-edit-dlg-title": "趣味選択画面",
+    "label-hobby-edit-explanation": "趣味を入力してください（複数選択可能です）",
+    "label-birthday": "誕生日",
+    "label-wake-up-time": "起床時間",
+    "label-work-start-time": "勤務開始時間",
+    "label-multi-input-title": "複数選択サンプル",
+    "label-tel-your-friends": "あなたの友人を選択してください",
+    "label-tel-your-best-friend": "あなたの親友を選択してください",
+    "label-single-input-title": "単一選択サンプル",
+    "label-single-input-title2": "単一選択サンプル（resから表示)",
+    "label-tel-your-best-prefecture": "あなたの一番好きな都道府県を選択してください",
+    "label-info-protection": "情報保護を有効にする"
+  }
+}

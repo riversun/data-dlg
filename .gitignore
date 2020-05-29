@@ -1,0 +1,26 @@
+# for Eclipse
+.classpath
+.project
+.settings
+
+# for build
+target
+build
+lib
+# for IDEA
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# for  mac
+.DS_Store
+
+/bin/
+/node_modules/
+/coverage/
+/release/
+/release_ja/
+/release_en/
+
+release.json

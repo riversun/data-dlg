@@ -1,0 +1,62 @@
+<div class="modal-header">
+    <h5 class="modal-title">#{label-title}</h5>
+    <button type="button" class="close" data-dismiss="modal">
+        <span>&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <form>
+        <span>#{label-comment}</span>
+        <!-- user-name -->
+        <div class="form-group">
+            <label class="col-form-label">#{label-user-name}</label>
+            <div class="input-group">
+                <input type="text" data-dlg-input-type="text" data-dlg-prop="userName"
+                       data-dlg-focus data-dlg-enter-to-apply class="form-control">
+            </div>
+            <label data-dlg-hidden="err-heat-empty" style="color:red"><small>#{error-user-name-empty}</small></label>
+        </div>
+
+        <!-- residence -->
+        <div class="form-group">
+            <label class="col-form-label">#{label-residence}</label>
+            <select data-dlg-input-type="number" data-dlg-prop="userResidence" data-dlg-ref="prefectures"
+                    class="form-control">
+            </select>
+        </div>
+
+        <!-- age -->
+        <div class="form-group">
+            <label class="col-form-label">#{label-user-age}</label>
+            <input type="number" class="form-control" data-dlg-input-type="number" data-dlg-prop="userAge"
+                   data-dlg-enter-to-apply>
+            <small style="color:red" data-dlg-hidden="msg-for-userAge">#{msg-for-userAge}</small>
+        </div>
+
+        <!-- hobbies -->
+        <div class="form-group">
+            <label class="col-form-label">#{label-user-hobby}</label>
+            <div class="input-group">
+                <!-- refはリソースを参照する -->
+                <input type="text" data-dlg-multi-prop="userHobbies" data-dlg-ref="hobbies"
+                       data-dlg="dlg-test-1-1" data-dlg-resume readonly class="form-control">
+                <span class="input-group-btn">
+                    <button type="button" data-dlg="dlg-test-1-1" data-dlg-resume data-dlg-key="userHobbies"
+                            class="btn btn-primary">#{label-edit}</button></span>
+            </div>
+        </div>
+        <!-- protect -->
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="customSwitch1" data-dlg-input-type="boolean"
+                   data-dlg-prop="userProtectionEnabled">
+            <label class="custom-control-label" for="customSwitch1"
+                   style="cursor: pointer">#{label-info-protection}</label>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" data-dlg-action="apply">#{label-ok}</button>
+    <button type="button" class="btn btn-secondary" data-dlg-action="cancel">#{label-cancel}</button>
+    <!--    <button type="button" class="btn btn-secondary" data-dlg-action="something" ddata-dismiss="modal">#{label-other}-->
+    </button>
+</div>
