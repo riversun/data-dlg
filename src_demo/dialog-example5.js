@@ -19,9 +19,10 @@ export default async function createDialog(dialogMgr, opt) {
       const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
       const openerElement = opener ? opener.element : null;// DATA-APIによってダイアログを開いた要素
 
-      const copyToPropNames = ['userBestFriend'];
+      const copyToPropNames = ['userBestPrefecture'];
       dialogMgr.bindModelFromContext(
         userData, data.dialog.context, copyToPropNames);
+
 
       dialogInstance.hide();
 

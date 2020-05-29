@@ -17,12 +17,12 @@ module.exports = (env, argv) => {
       contentBase: path.join(__dirname, 'public'),
       watchContentBase: true,
       port: 3000,
-      host:'localhost',
+      host: 'localhost',
       disableHostCheck: true,
     },
     entry: {
       'demo': ['./src_demo/index.js'],
-      'data-dlg': ['./src_lib/lib/dialog-manager.js'],
+      'data-dlg': ['./src/dialog-manager.js'],
     },
     output: {
       path: path.join(__dirname, 'lib'),

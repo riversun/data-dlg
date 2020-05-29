@@ -1,5 +1,5 @@
 import bsn from "bootstrap.native/dist/bootstrap-native-v4";
-import DialogManager from "../src_lib/lib/dialog-manager.js";
+import DialogManager from "../src/dialog-manager.js";
 import createDialog1 from './dialog-example1.js';
 import createDialog1_1 from './dialog-example1-1.js';
 import createDialog2 from './dialog-example2.js';

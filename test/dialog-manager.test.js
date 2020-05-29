@@ -1,4 +1,4 @@
-import DialogManager from "../src_lib/lib/dialog-manager";
+import DialogManager from "../src/dialog-manager";
 import { typeOf } from "../src/common-utils";
 import bsn from "bootstrap.native/dist/bootstrap-native-v4";
 
