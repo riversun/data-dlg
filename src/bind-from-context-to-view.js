@@ -1,13 +1,13 @@
-import { isTruthy, typeOf, unescapeHTML } from "./common-utils";
+import { isTruthy, typeOf, unescapeHTML } from './common-utils';
 import {
   getInputPropertyName,
   getInputPropertyType,
   getMutiInputPropertyName,
   getAllSingleInputEles,
-  getAllMultipleInputEles
-} from "./data-api-resolver.js";
-import { doPopulateContextToDatePicker } from './bind-from-context-to-view-datepicker.js';
-import { getListingInputDispDataMap } from './view-data-resolver.js';
+  getAllMultipleInputEles,
+} from './data-api-resolver';
+import doPopulateContextToDatePicker from './bind-from-context-to-view-datepicker';
+import getListingInputDispDataMap from './view-data-resolver';
 
 /**
  * 1つの選択候補の表示文字列を取得する
@@ -21,30 +21,24 @@ export function getSingleDispOf(dlgPropInputEle, rawValue) {
   const inputPropertyType = getInputPropertyType(dlgPropInputEle);
 
   if (dlgPropInputEle.tagName.toLowerCase() === 'input' || dlgPropInputEle.tagName.toLowerCase() === 'select') {
-
-
     if (dlgInputPropName) {
-
       if (inputPropertyType === 'text' || inputPropertyType === 'number') {
         if (isTruthy(rawValue)) {
           if (Array.isArray(rawValue)) {
             throw Error(`"${rawValue} should not be an array with 'data-dlg-multi-prop' attribute.`);
           }
           // contextに値がセットされていたら
-          //入力elementに初期値をセットする
+          // 入力elementに初期値をセットする
           return unescapeHTML(rawValue);
         }
         return '';
-        //throw Error(`${dlgInputPropName} ${rawValue} seems to be falsy`);
-
+        // throw Error(`${dlgInputPropName} ${rawValue} seems to be falsy`);
       }
       throw Error(`Invalid property type ${inputPropertyType}. text or number can be supported.`);
     }
     throw Error(`The element ${dlgPropInputEle} doesn't have a property name attribute.`);
   }
   throw Error(`Not currently supported element "${dlgPropInputEle.tagName}" as dialog input element.`);
-
-
 }
 
 /**
@@ -53,14 +47,13 @@ export function getSingleDispOf(dlgPropInputEle, rawValue) {
  */
 export function doShowContextToDialogInput(dialogModel, opt) {
   const dialogEle = dialogModel.element;
-  const context = dialogModel.context;
+  const { context } = dialogModel;
 
   // data-dlg-propのハンドリング
   // ダイアログのうちバインディング（入力用コントロールと、入力値を格納するプロパティのひもづけ）が指定された要素を検索する
   const dlgPropInputEles = getAllSingleInputEles(dialogEle);
 
   for (const dlgPropInputEle of dlgPropInputEles) {
-
     // 入力コントロールの入力値がひもづけられるプロパティ名
     const dlgInputPropName = getInputPropertyName(dlgPropInputEle);
     const inputPropertyType = getInputPropertyType(dlgPropInputEle);
@@ -69,7 +62,6 @@ export function doShowContextToDialogInput(dialogModel, opt) {
       const inputValue = context[dlgInputPropName];
       dlgPropInputEle.value = getSingleDispOf(dlgPropInputEle, inputValue);
     } else if (inputPropertyType === 'boolean') {
-
       if (dlgPropInputEle.tagName.toLowerCase() === 'input' && dlgPropInputEle.type === 'checkbox') {
         const inputValue = context[dlgInputPropName];
 
@@ -92,7 +84,7 @@ export function doShowContextToDialogInput(dialogModel, opt) {
         throw Error(`Not currently supported element "${dlgPropInputEle.tagName}" as dialog input element.`);
       }
     } else {
-      throw Error(`Unknown inputPropertyType:${inputPropertyType} for property ${dlgInputPropName}`)
+      throw Error(`Unknown inputPropertyType:${inputPropertyType} for property ${dlgInputPropName}`);
     }
   }
 }
@@ -103,15 +95,14 @@ export function doShowContextToDialogInput(dialogModel, opt) {
  */
 export function doShowMultiPropContextToDialogInput(dialogModel, opt) {
   const dialogEle = dialogModel.element;
-  const context = dialogModel.context;
-  const i18res = opt.i18res;
+  const { context } = dialogModel;
+  const { i18res } = opt;
 
   // data-dlg-multi-prop
   // ダイアログのうちバインディング（入力用コントロールと、入力値を格納するプロパティのひもづけ）が指定された要素を検索する
-  const dlgPropMultiInputEles =getAllMultipleInputEles(dialogEle);
+  const dlgPropMultiInputEles = getAllMultipleInputEles(dialogEle);
 
   for (const dlgPropMultiInputEle of dlgPropMultiInputEles) {
-
     if (dlgPropMultiInputEle.tagName.toLowerCase() === 'input') {
       // 複数選択の結果をinput要素に「選択肢１,選択肢2,選択肢3」のように反映する
 
@@ -121,7 +112,7 @@ export function doShowMultiPropContextToDialogInput(dialogModel, opt) {
         const inputValue = context[dlgMultiInputPropName];
         if (isTruthy(inputValue)) {
           if (Array.isArray(inputValue)) {
-            const dispData = getListingInputDispDataMap(dialogModel, dlgPropMultiInputEle, { i18res: i18res })
+            const dispData = getListingInputDispDataMap(dialogModel, dlgPropMultiInputEle, { i18res });
             let dispText = '';
             for (let i = 0; i < inputValue.length; i += 1) {
               const DELIMITER = ',';
@@ -134,11 +125,10 @@ export function doShowMultiPropContextToDialogInput(dialogModel, opt) {
             }
             dlgPropMultiInputEle.value = unescapeHTML(dispText);
           }
-          //throw Error(`"${inputValue} should be an array with 'data-dlg-multi-prop' attribute.`);
+          // throw Error(`"${inputValue} should be an array with 'data-dlg-multi-prop' attribute.`);
         }
-        //throw Error(`${dlgMultiInputPropName} seems empty. value=${inputValue}`);
+        //  Error(`${dlgMultiInputPropName} seems empty. value=${inputValue}`);
       }
-
     } else if (dlgPropMultiInputEle.tagName.toLowerCase() === 'div') {
       // 複数選択の結果をチェックボックスのチェック状態に反映する
 

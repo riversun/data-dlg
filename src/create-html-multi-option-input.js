@@ -1,11 +1,8 @@
 import {
-  attrDataDlgRef,
   getDataRefPropName,
-  getInputDataRefIdPropName,
-  getInputDataRefDispPropName,
-  getAllDataRefEles
-} from "./data-api-resolver";
-import { getListingInputDispDataMap } from './view-data-resolver.js';
+  getAllDataRefEles,
+} from './data-api-resolver';
+import getListingInputDispDataMap from './view-data-resolver';
 
 /**
  * data-dlg-ref属性に指定されたリソース名から
@@ -15,24 +12,21 @@ import { getListingInputDispDataMap } from './view-data-resolver.js';
  *
  *
  */
-export function doHandleChoiceEles(dialogModel, opt) {
+export default function doHandleChoiceEles(dialogModel, opt) {
   const dialogEle = dialogModel.element;
-  const context = dialogModel.context;
-  const i18res = opt.i18res;
+
+  const { i18res } = opt;
 
   // SELECT要素のoptionに設定する文字列一覧を、data-dlg-ref属性で指定されたリソース名で取得する
   const selectEles = getAllDataRefEles(dialogEle, { tag: 'select' });
 
   for (const selectEle of selectEles) {
-
-    //const dispResourcePropName = getInputDataRef(selectEle);
-    const dispData = getListingInputDispDataMap(dialogModel, selectEle, { i18res: i18res })
+    const dispData = getListingInputDispDataMap(dialogModel, selectEle, { i18res });
     let html = '';
-    for (let [id, dispText] of dispData.entries()) {
+    for (const [id, dispText] of dispData.entries()) {
       html += `<option value="${id}">${dispText}</option>`;
     }
     selectEle.innerHTML = html;
-
   }
 
   // DIV要素以下に複数選択可能なcheckbox群のキャプション情報として
@@ -40,11 +34,10 @@ export function doHandleChoiceEles(dialogModel, opt) {
   // handle <div class="form-group" data-dlg-ref="prefectures"> eles for generating checkboxes
   const checkboxesParentEles = getAllDataRefEles(dialogEle, { tag: '.form-group' });
   for (const checkboxesParentEle of checkboxesParentEles) {
-
     const dispResourcePropName = getDataRefPropName(checkboxesParentEle);
-    const dispData = getListingInputDispDataMap(dialogModel, checkboxesParentEle, { i18res: i18res })
+    const dispData = getListingInputDispDataMap(dialogModel, checkboxesParentEle, { i18res });
     let html = '';
-    for (let [id, dispText] of dispData.entries()) {
+    for (const [id, dispText] of dispData.entries()) {
       html += `<!-- -->
 <div class="custom-control custom-checkbox custom-pad">
     <input type="checkbox" class="custom-control-input" id="check-${dispResourcePropName}--${id}" >

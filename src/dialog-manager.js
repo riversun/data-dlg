@@ -1,14 +1,13 @@
 import './scss/dialog-manager.scss';
 import EventListenerHelper from 'event-listener-helper';
 import mergeDeeply from 'merge-deeply';
-import { isTruthy } from './common-utils.js';
-import DlgmgrTemplateFiller from "./dlgmgr-template-filler";
 import { AjaxClient } from 'ajax-client';
-import { doCopyDialogInputToContext } from './bind-from-view-to-context.js';
-import { doShowContextToDialogInput, doShowMultiPropContextToDialogInput } from './bind-from-context-to-view.js';
-import i18nice from "i18nice";
-import { doHandleChoiceEles } from './create-html-multi-option-input.js'
-import { isFalsy, typeOf } from "./common-utils";
+import I18nice from 'i18nice';
+import { isTruthy, isFalsy, typeOf } from './common-utils';
+import DlgmgrTemplateFiller from './dlgmgr-template-filler';
+import { doCopyDialogInputToContext } from './bind-from-view-to-context';
+import { doShowContextToDialogInput, doShowMultiPropContextToDialogInput } from './bind-from-context-to-view';
+import doHandleChoiceEles from './create-html-multi-option-input';
 
 
 /**
@@ -31,16 +30,15 @@ import { isFalsy, typeOf } from "./common-utils";
  "apply"と"cancel"以外の値がセットされたボタンがクリックされた場合は"onAny"がコールバックされる。
  */
 export default class DialogManager {
-
   constructor() {
     this.dialogModels = new Map();
-    this.evh = new EventListenerHelper;
+    this.evh = new EventListenerHelper();
     this.templateFill = new DlgmgrTemplateFiller();
     this.loadTemplateOnOpen = false;
 
     this.client = new AjaxClient();
     this.locale = 'en';
-    this.i18res = new i18nice();
+    this.i18res = new I18nice();
     this.i18res.setFallback('en');
     this.templateFill.i18res = this.i18res;
   }
@@ -75,7 +73,7 @@ export default class DialogManager {
 
   async setResourcesWithModel(model) {
     this.i18res.init(model);
-    return "success";
+    return 'success';
   }
 
   /**
@@ -84,12 +82,10 @@ export default class DialogManager {
    * @returns {Promise<unknown>}
    */
   async setResourcesFromUrl(url) {
-
     const stringsRes = await this.loadResourceFromUrl(url, 'json', 'setResourcesFromUrl');
     this.i18res.init(stringsRes);
 
-    return "success";
-
+    return 'success';
   }
 
   setLocale(locale) {
@@ -104,7 +100,7 @@ export default class DialogManager {
    * @param keys 書きこみするプロパティ名（無指定ならmodelにあるすべてのプロパティを書き込む)
    */
   bindModelToContext(model, context, keys) {
-    for (let key of Object.keys(model)) {
+    for (const key of Object.keys(model)) {
       if (!key || keys.includes(key)) {
         context[key] = model[key];
       }
@@ -118,9 +114,8 @@ export default class DialogManager {
    * @param keys
    */
   bindModelFromContext(model, context, keys) {
-    for (let key of Object.keys(model)) {
+    for (const key of Object.keys(model)) {
       if (!keys || keys.includes(key)) {
-
         if (isTruthy(context[key]) || typeOf(context[key] === 'Boolean')) {
           model[key] = context[key];
         }
@@ -136,8 +131,8 @@ export default class DialogManager {
    */
   async createDialog(opt) {
     const dialogId = opt.id;
-    const template = opt.template;
-    const url = opt.url;
+    const { template } = opt;
+    const { url } = opt;
 
     const callbackStore = {
       onCreate: opt.onCreate,
@@ -145,7 +140,7 @@ export default class DialogManager {
       onResume: opt.onResume,
       onApply: opt.onApply,
       onCancel: opt.onCancel,
-      onAny: opt.onAny
+      onAny: opt.onAny,
     };
     if (!template && !url) {
       throw Error('template or url property should be specified.');
@@ -170,29 +165,27 @@ export default class DialogManager {
           keyboard: true, // true:close modal by pressing ESC
         });
 
-      const htmlTemplateFromUrl =
-        !this.loadTemplateOnOpen ? await this.loadResourceFromUrl(url, 'text', `htmlTemplateFromUrl for dialog:${dialogId}`) : null;
+      const htmlTemplateFromUrl = !this.loadTemplateOnOpen ? await this.loadResourceFromUrl(url, 'text', `htmlTemplateFromUrl for dialog:${dialogId}`) : null;
 
       const dialogModel = {
-        id: dialogId,// dialog id which is same as dialog DOM element
-        instance: bsnModalDialogInstance,// bootstrap.native's modal dialog instance
-        element: dialogElement,// dialog DOM element
-        template: template ? template : htmlTemplateFromUrl,// template written in HTML text
-        url: url,
-        callback: callbackStore,// dialog event listener
-        context: null,// property values for template
-        opener: null,// data of this dialog opener
-        params: {},// extra parameters for dialog handling
+        id: dialogId, // dialog id which is same as dialog DOM element
+        instance: bsnModalDialogInstance, // bootstrap.native's modal dialog instance
+        element: dialogElement, // dialog DOM element
+        // template: template ? template : htmlTemplateFromUrl,// template written in HTML text
+        template: template || htmlTemplateFromUrl, // template written in HTML text
+        url,
+        callback: callbackStore, // dialog event listener
+        context: null, // property values for template
+        opener: null, // data of this dialog opener
+        params: {}, // extra parameters for dialog handling
       };
       this.dialogModels.set(dialogId, dialogModel);
-
     } else {
-      //console.log(`Dialog element you specified by id:"${dialogId}" has already been existed.`);
+      // console.log(`Dialog element you specified by id:"${dialogId}" has already been existed.`);
 
     }
 
     return '';
-
   }
 
   /**
@@ -203,28 +196,26 @@ export default class DialogManager {
    */
   async loadResourceFromUrl(url, dataType, comment) {
     return new Promise((resolve, reject) => {
-
       if (isFalsy(url)) {
         resolve();
       }
 
       this.client.ajax({
         type: 'get',
-        url: url,
+        url,
         contentType: 'application/json',
-        dataType: dataType,
-        timeoutMillis: 5000,//timeout milli-seconds
-        success: (response, xhr) => {
-          //1回ダウンロードしたらこのダイアログのテンプレートを記憶する
+        dataType,
+        timeoutMillis: 5000, // timeout milli-seconds
+        success: (response) => {
+          // 1回ダウンロードしたらこのダイアログのテンプレートを記憶する
           resolve(response);
-
         },
-        error: (e, xhr) => {
-          reject(new Error(`Network error. while ${comment}`));
+        error: (e) => {
+          reject(new Error(`Network error. while ${comment} error:${e}`));
         },
-        timeout: (e, xhr) => {
-          reject(new Error(`Network timeout error. while ${comment}`));
-        }
+        timeout: (e) => {
+          reject(new Error(`Network timeout error. while ${comment} error:${e}`));
+        },
       });
     });
   }
@@ -236,25 +227,16 @@ export default class DialogManager {
    * @returns {boolean} true:success false:failure or no dialog found.
    */
   deleteDialog(dialogId) {
-    const dialogModel = this.getDialogModelById(dialogId)
+    const dialogModel = this.getDialogModelById(dialogId);
     if (dialogModel) {
-      const dialogId = dialogModel.id;
-      const dialogTemplate = dialogModel.template;
-      const dialogUrl = dialogModel.url;
       const dialogElement = dialogModel.element;
-      const dialogInstance = dialogModel.instance;
-      const dialogContext = dialogModel.context;
-      const dialogOpener = dialogModel.opener;
-      const dialogParams = dialogModel.params;
-      const dialogCallback = dialogModel.callback;
       // remove from dialogModel map
       this.dialogModels.delete(dialogId);
       // remove DOM element
       dialogElement.parentNode.removeChild(dialogElement);
       return true;
-    } else {
-      return false;
     }
+    return false;
   }
 
 
@@ -305,41 +287,39 @@ export default class DialogManager {
     // 「save」ボタン等のイベントをセットする
     const dlgActionEles = dialogEle.querySelectorAll('[data-dlg-action]');
     if (dlgActionEles) {
-      //ダイアログ内にあるアクション（登録をするための)ボタンを検索する
+      // ダイアログ内にあるアクション（登録をするための)ボタンを検索する
       for (const dlgActionEle of dlgActionEles) {
         const actionName = dlgActionEle.getAttribute('data-dlg-action');
 
         if (actionName === 'apply') {
           // アクションが「apply」だった場合
-          this.evh.addEventListener(dlgActionEle, 'click', async (e) => {
+          this.evh.addEventListener(dlgActionEle, 'click', async () => {
             doCopyDialogInputToContext(dialogModel);
-
             if (callbacks.onApply) {
-              //コールバック
+              // コールバック
               await callbacks.onApply({ action: 'apply', dialog: dialogModel });
             }
           }, { listenerName: `click-listener-for-apply-dlg-${dialogId}` });
-        }// if (actionName === 'apply') {
-        else if (actionName === 'cancel') {
-          this.evh.addEventListener(dlgActionEle, 'click', async (e) => {
+        } else if (actionName === 'cancel') {
+          this.evh.addEventListener(dlgActionEle, 'click', async () => {
             await this.doCallbackCancel(actionName, dialogModel);
           }, { listenerName: `click-listener-for-cancel-dlg-${dialogId}` });
         } else if (actionName) {
-          this.evh.addEventListener(dlgActionEle, 'click', async (e) => {
+          this.evh.addEventListener(dlgActionEle, 'click', async () => {
             await this.doCallbackAny(actionName, dialogModel);
           }, { listenerName: `click-listener-for-${actionName}-dlg-${dialogId}` });
         }
       }
     }
 
-    //改行で適用効果をつけるinput要素
+    // 改行で適用効果をつけるinput要素
     const enterToApplyInputEle = dialogEle.querySelector('[data-dlg-enter-to-apply]');
     if (enterToApplyInputEle) {
       this.evh.addEventListener(enterToApplyInputEle, 'keypress', async (evt) => {
         if (evt.code === 'Enter' || evt.code === 'NumpadEnter') {
           doCopyDialogInputToContext(dialogModel);
           if (callbacks.onApply) {
-            //コールバック
+            // コールバック
             await callbacks.onApply({ action: 'apply', dialog: dialogModel });
           }
         }
@@ -349,8 +329,7 @@ export default class DialogManager {
 
   doHandleHiddenEles(dialogModel) {
     const dialogEle = dialogModel.element;
-    const dialogId = dialogModel.id;
-    const context = dialogModel.context;
+    const { context } = dialogModel;
 
     // あるcontextプロパティ値がセットされていない場合には隠す処理をする
     const dlgHiddenEles = dialogEle.querySelectorAll('[data-dlg-hidden]');
@@ -377,15 +356,14 @@ export default class DialogManager {
    */
   async showDialog(dialogId, opt) {
     // openerではなく手動でダイアログを表示する
-    const _opt = opt ? opt : {};
+    const safeOpt = opt || {};
     const dialogModel = this.getDialogModelById(dialogId);
     if (dialogModel) {
-
-      mergeDeeply({ op: 'overwrite-merge', object1: dialogModel, object2: _opt });
+      mergeDeeply({ op: 'overwrite-merge', object1: dialogModel, object2: safeOpt });
 
       // _optがdialogModelにコピーできない問題がある場合の、workaround
-      if (isTruthy(_opt.context) && isTruthy(dialogModel.context)) {
-        mergeDeeply({ op: 'overwrite-merge', object1: dialogModel.context, object2: _opt.context });
+      if (isTruthy(safeOpt.context) && isTruthy(dialogModel.context)) {
+        mergeDeeply({ op: 'overwrite-merge', object1: dialogModel.context, object2: safeOpt.context });
       }
 
       await this.openDialogInternally(dialogModel);
@@ -398,7 +376,6 @@ export default class DialogManager {
     if (callbacks.onCreate) {
       await callbacks.onCreate({ action: 'create', dialog: dialogModel });
     }
-
   }
 
 
@@ -416,23 +393,19 @@ export default class DialogManager {
    */
   refreshDialog(dialogId, opt) {
     // ダイアログを表示する
-    const _opt = opt ? opt : {};
+    const safeOpt = opt || {};
     const dialogModel = this.getDialogModelById(dialogId);
 
     if (dialogModel) {
-      mergeDeeply({ op: 'overwrite-merge', object1: dialogModel, object2: _opt });
+      mergeDeeply({ op: 'overwrite-merge', object1: dialogModel, object2: safeOpt });
       // _optがdialogModelにコピーできない問題がある場合の、workaround
-      if (isTruthy(_opt.context) && isTruthy(dialogModel.context)) {
-        mergeDeeply({ op: 'overwrite-merge', object1: dialogModel.context, object2: _opt.context });
+      if (isTruthy(safeOpt.context) && isTruthy(dialogModel.context)) {
+        mergeDeeply({ op: 'overwrite-merge', object1: dialogModel.context, object2: safeOpt.context });
       }
-
-      const dialogId = dialogModel.id;
-      const dialogEle = dialogModel.element;
       const dialogInstance = dialogModel.instance;
       const dialogTemplate = dialogModel.template;
       const dialogUrl = dialogModel.url;
-
-      const context = dialogModel.context;
+      const { context } = dialogModel;
 
       if (isFalsy(context)) {
         throw Error(`dialogId:${dialogId} 's context is falsy. \nIsn't it possible to input/output using a dialog, even though the context is falsy:${context}?
@@ -451,17 +424,15 @@ Or if you have an external dialog set to a value, are you giving it a "data-dlg-
       }
 
       const fnShowDialog = async (templateHTML) => {
-
         // HTMLテンプレートに記載されたプレースホルダー#{}にデータを埋める
 
-        //optionで直接"context"が指定されていたらそれを優先する
-        const dataPopulatedHTML = this.templateFill.populateModelIntoTemplate(templateHTML, _opt.context ? _opt.context : context)
-        dialogInstance.setContent(dataPopulatedHTML);//ここではじめてダイアログ内のコンテンツHTMLがセットされる
+        // optionで直接"context"が指定されていたらそれを優先する
+        const dataPopulatedHTML = this.templateFill.populateModelIntoTemplate(templateHTML, safeOpt.context ? safeOpt.context : context);
+        dialogInstance.setContent(dataPopulatedHTML);// ここではじめてダイアログ内のコンテンツHTMLがセットされる
 
 
         const dialogEle = dialogModel.element;
-        const dialogId = dialogModel.id;
-        const dataDialogAttrs = dialogEle.querySelectorAll('[data-dlg]')
+        const dataDialogAttrs = dialogEle.querySelectorAll('[data-dlg]');
         if (dataDialogAttrs && dataDialogAttrs.length > 0) {
           // data-dlg属性（つまり別のダイアログを起動するための属性）がこのダイアログに指定されていた場合
           this.doSetupDataDialog(dialogEle, { resumeDialogId: dialogId });
@@ -494,7 +465,7 @@ Or if you have an external dialog set to a value, are you giving it a "data-dlg-
         if (dialogModel.focusProperty) {
           if (dialogModel.focusProperty === 'none') {
             // noneが指定されていたら、どこにもオートフォーカスはしない
-            //ただし１回で効力は切れる
+            // ただし１回で効力は切れる
             dialogModel.focusProperty = null;
           } else {
             focusEle = dialogEle.querySelector(`[data-dlg-prop=${dialogModel.focusProperty}]`);
@@ -508,45 +479,41 @@ Or if you have an external dialog set to a value, are you giving it a "data-dlg-
             focusEle.focus();
           }, 500);
         }
-
       };
 
       if (dialogTemplate) {
-        //optionで直接templateHTMLが指定されていたら、それを優先する
-        const templateHTML = _opt.template ? _opt.template : dialogTemplate;
+        // optionで直接templateHTMLが指定されていたら、それを優先する
+        const templateHTML = safeOpt.template ? safeOpt.template : dialogTemplate;
 
         setTimeout(async () => {
           await fnShowDialog(templateHTML);
         }, 0);
-
       } else if (dialogUrl) {
-
         // urlが指定されていた場合はurlからダイアログレンダリングhtmlを取得する
 
         this.client.ajax({
           type: 'get',
           url: dialogUrl,
           contentType: 'text/html',
-          dataType: 'text',//data type to parse when receiving response from server
-          timeoutMillis: 5000,//timeout milli-seconds
-          success: async (response, xhr) => {
-            //Once downloaded, remember template
+          dataType: 'text', // data type to parse when receiving response from server
+          timeoutMillis: 5000, // timeout milli-seconds
+          success: async (response) => {
+            // Once downloaded, remember template
             dialogModel.template = response;
             await fnShowDialog(response);
           },
-          error: (e, xhr) => {
+          error: (e) => {
+            console.error(e);
             alert('Network Error occurred.Please reload the page.ネットワークエラーが発生しました、お手数ですがページリロードをおねがいします');
           },
-          timeout: (e, xhr) => {
-          }
+          timeout: (e) => {
+            console.error(e);
+          },
         });
       }
-
     } else {
       console.error(`No dialog model found for dialogId:"${dialogId}"`);
     }
-
-
   }
 
 
@@ -568,20 +535,21 @@ Or if you have an external dialog set to a value, are you giving it a "data-dlg-
     // ＝属性に'data-dlg'のある要素
     const dlgOpenerElements = scopeEle.querySelectorAll('[data-dlg]');
     for (const dlgOpenerEle of dlgOpenerElements) {
-      //これから開くべきダイアログのid
+      // これから開くべきダイアログのid
       const openingDialogId = dlgOpenerEle.getAttribute('data-dlg');
 
       // このダイアログを開いたダイアログ(openerDialog)に戻りたいか否かを確認。トリガーになった要素(openerEle)の属性で指定してある
       const attrIsResume = dlgOpenerEle.getAttribute('data-dlg-resume');
 
       // このダイアログを開いたダイアログ(openerDialog)に戻りたいか否かのフラグ
-      const wantToBackOpenerDialog = attrIsResume !== null && attrIsResume !== 'undefined';  // openerにはdata-dlgで開きたいダイアログを指定しているが、
+      const wantToBackOpenerDialog = attrIsResume !== null && attrIsResume !== 'undefined'; // openerにはdata-dlgで開きたいダイアログを指定しているが、
 
       // openerがもともと別のダイアログ上にあった場合
+      // eslint-disable-next-line no-irregular-whitespace
       //　新たなダイアログを開いた後に、元のダイアログに戻りたい（開きなおしたい）場合がある
       // その場合に optにresumeDialogIdを指定しておくと、
       // そのdialogIdのダイアログに「戻れる」
-      const backToDialogId = opt ? opt.resumeDialogId : null;//戻るべきダイアログのdialogId
+      const backToDialogId = opt ? opt.resumeDialogId : null;// 戻るべきダイアログのdialogId
 
       // 開き元のダイアログ(openerDialog)に戻りたいフラグとそのdialogIdが指定されていた場合、
       // 開き元のダイアログに戻る
@@ -593,7 +561,7 @@ Or if you have an external dialog set to a value, are you giving it a "data-dlg-
       const openingDialogModel = this.getDialogModelById(openingDialogId);
       if (openingDialogModel) {
         // このダイアログを開くトリガーになった要素(openerEle)にクリックイベントリスナーをセットする
-        this.evh.addEventListener(dlgOpenerEle, 'click', async (e) => {
+        this.evh.addEventListener(dlgOpenerEle, 'click', async () => {
           const openingDialogElement = openingDialogModel.element;
           const targetDialogDataKey = dlgOpenerEle.getAttribute('data-dlg-key');
           const opener = { element: dlgOpenerEle, key: targetDialogDataKey };
@@ -601,18 +569,18 @@ Or if you have an external dialog set to a value, are you giving it a "data-dlg-
 
           const backToDialogModel = this.getDialogModelById(backToDialogId);
           if (needToBackOpenerDialog) {
-            //もし、開き元のダイアログ(backToDialog)に戻るモードなら、開き元のダイアログのcontextを
+            // もし、開き元のダイアログ(backToDialog)に戻るモードなら、開き元のダイアログのcontextを
             // これから開くダイアログ(openingDialog)にセットする
 
-            //新しいダイアログ(openingDialog)が開く前に、現在のダイアログ(backToDialog)の入力状態をcontextに反映しておく
+            // 新しいダイアログ(openingDialog)が開く前に、現在のダイアログ(backToDialog)の入力状態をcontextに反映しておく
             doCopyDialogInputToContext(backToDialogModel);
 
-            // TODO 全部セットでいいかどうかは別途検討
+            // set whole context(copy context)
             openingDialogModel.context = backToDialogModel.context;
           }
 
           // data-dlgで指定されていたopeningDialogを開く
-          await this.openDialogInternally(openingDialogModel)
+          await this.openDialogInternally(openingDialogModel);
           this.refreshDialog(openingDialogId);
 
           if (needToBackOpenerDialog) {
@@ -621,10 +589,8 @@ Or if you have an external dialog set to a value, are you giving it a "data-dlg-
 
             if (!this.evh.hasEventListener(openingDialogElement, 'hidden.bs.modal',
               `close-listener-for-resume-to-${opt.resumeDialogId}`)) {
-
               // openingDialogが閉じたときのイベントを登録
               this.evh.addEventListener(openingDialogElement, 'hidden.bs.modal', async () => {
-
                 // 戻り先ダイアログに、いま開いていたダイアログのdialogModelを入れる
                 backToDialogModel.params.resume = {
                   openerKey: targetDialogDataKey,
@@ -632,17 +598,13 @@ Or if you have an external dialog set to a value, are you giving it a "data-dlg-
                 };
                 backToDialogModel.focusProperty = 'none';
 
-                //元のダイアログを表示
+                // 元のダイアログを表示
                 this.refreshDialog(opt.resumeDialogId);
-
               }, { listenerName: `close-listener-for-resume-to-${opt.resumeDialogId}` });
             }
-
           }
         }, { listenerName: `click-listener-for-open-dlg-${openingDialogId}` });
       }
     }
   }
-
-
 }

@@ -65,9 +65,9 @@ module.exports = (env, argv) => {
             {
               loader: 'babel-loader',
             },
-            // {
-            //   loader: 'eslint-loader',
-            // },
+            {
+              loader: 'eslint-loader',
+            },
           ],
         },
         //scss
@@ -127,9 +127,6 @@ module.exports = (env, argv) => {
       new MiniCssExtractPlugin({
         filename: argv.mode === 'production' ? `[name].css` : `[name].css`,  //`[name].min.js`
       }),
-      // Ignore all locale files of moment.js
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-
     ],
   };
 

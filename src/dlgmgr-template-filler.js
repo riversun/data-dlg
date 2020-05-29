@@ -1,12 +1,12 @@
-import { isTruthy, isFalsy, typeOf, escapeHTML, unescapeHTML } from './common-utils.js';
+import { isTruthy, typeOf } from './common-utils';
 
 export default class DlgmgrTemplateFiller {
   constructor(opt) {
     this.i18res = opt ? opt.i18res : null;
-    //Regexp for extracting all enclosed placeholder(like #{something}) in the text
+    // Regexp for extracting all enclosed placeholder(like #{something}) in the text
     this.REGEXP_4_ALL_PLACEHOLDERS = /#{([\s\S]*?)}/g;
 
-    //Regexp for extracting internal contents of placeholder(like #{something}) in the text
+    // Regexp for extracting internal contents of placeholder(like #{something}) in the text
     this.REGEXP_4_PLACEHOLDER_CONTENT = /#{([\s\S]*?)}/;
   }
 
@@ -17,12 +17,12 @@ export default class DlgmgrTemplateFiller {
    * @returns {*} populatedText
    */
   populateModelIntoTemplate(template, model) {
-    const populatedText = template.replace(this.REGEXP_4_ALL_PLACEHOLDERS, function(match) {
+    const populatedText = template.replace(this.REGEXP_4_ALL_PLACEHOLDERS, (match) => {
       // Get the contents enclosed with #{}
 
       const propertyName = match.match(this.REGEXP_4_PLACEHOLDER_CONTENT)[1];
 
-      let replacementFromModel = isTruthy(model) ? model[propertyName] : '';
+      const replacementFromModel = isTruthy(model) ? model[propertyName] : '';
       let replacementValueFromModel = null;
       let replacementValueFromI18res = null;
       // property context for i18res
@@ -53,7 +53,7 @@ export default class DlgmgrTemplateFiller {
         replacementStr = '';
       }
       return replacementStr;
-    }.bind(this));
+    });
     return populatedText;
   }
 }

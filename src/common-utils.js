@@ -13,7 +13,7 @@ export function escapeHTML(str) {
       .replace(/'/g, '&#39;');
   }
   return str;
-};
+}
 
 export function unescapeHTML(str) {
   if (str && typeOf(str) === 'String') {
@@ -25,13 +25,13 @@ export function unescapeHTML(str) {
       .replace(/(&amp;)/g, '&');
   }
   return str;
-};
-
-export function isTruthy(obj) {
-  return !isFalsy(obj);
 }
 
 export function isFalsy(obj) {
   const res = (typeof obj === 'undefined') || (obj === null) || (obj === false);
   return res;
+}
+
+export function isTruthy(obj) {
+  return !isFalsy(obj);
 }

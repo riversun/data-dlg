@@ -1,5 +1,5 @@
-import { getDataRefPropName, getInputDataRefDispPropName, getInputDataRefIdPropName } from "./data-api-resolver";
-import { isFalsy } from "./common-utils";
+import { getDataRefPropName, getInputDataRefDispPropName, getInputDataRefIdPropName } from './data-api-resolver';
+import { isFalsy } from './common-utils';
 
 /**
  * 指定したtargetEle要素（複数の候補表示するselectやcheckboxの親となるdiv要素）の属性に従い
@@ -8,10 +8,9 @@ import { isFalsy } from "./common-utils";
  * @param opt
  * @returns {Map<id, dispText>}
  */
-export function getListingInputDispDataMap(dialogModel, targetEle, opt) {
-
-  const context = dialogModel.context;
-  const i18res = opt.i18res;
+export default function getListingInputDispDataMap(dialogModel, targetEle, opt) {
+  const { context } = dialogModel;
+  const { i18res } = opt;
   const result = new Map();
 
   // 参照先(i18resまたはcontext内の)のプロパティ名
@@ -25,9 +24,9 @@ export function getListingInputDispDataMap(dialogModel, targetEle, opt) {
 
   // i18resに格納されたプロパティ群
   const dispStringsFromI18Res = i18res.t(dispResourcePropName);
-  //自前で指定したプロパティ群
+  // 自前で指定したプロパティ群
   const dispStringsFromContext = customSrc;
-  const dispModels = dispStringsFromContext ? dispStringsFromContext : dispStringsFromI18Res;
+  const dispModels = dispStringsFromContext || dispStringsFromI18Res;
 
   if (dispModels) {
     if (Array.isArray(dispModels)) {
@@ -38,7 +37,7 @@ export function getListingInputDispDataMap(dialogModel, targetEle, opt) {
         if (refIdPropName && refIdPropName) {
           id = dispObject[refIdPropName];
           dispText = dispObject[refDispPropName];
-          if(isFalsy(dispText)){
+          if (isFalsy(dispText)) {
             throw Error(`${refDispPropName}'s resource not found.dispText:${dispText}`);
           }
         }

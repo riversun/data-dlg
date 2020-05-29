@@ -3,7 +3,8 @@
  * @param dlgInputEle
  * @returns {Date}
  */
-export function doPopulateDatePickerToContext(dlgInputEle) {
+export default function doPopulateDatePickerToContext(dlgInputEle) {
+  // eslint-disable-next-line no-underscore-dangle
   const fp = dlgInputEle._flatpickr;
   return fp.selectedDates[0];
 }
