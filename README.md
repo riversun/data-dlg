@@ -7,8 +7,22 @@ data-dlg is data-binder for bsn boosted Bootstrap4 modal dialog.
 
 # install
 
+via npm
+
 ```
 npm install data-dlg
+```
+
+via CDN
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/data-dlg/lib/data-dlg.js"></script>
+```
+
+# import NPM project as ES module
+
+```javascript
+import DialogManager from "data-dlg";
 ```
 
 # data-dlg apis
