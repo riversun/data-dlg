@@ -159,7 +159,7 @@ export function doShowMultiPropContextToDialogInput(dialogModel, opt) {
         }
       }
     } else {
-      console.log(`Not currently supported element "${dlgPropMultiInputEle.tagName}" as multi-prop dialog input element.`);
+      // console.log(`Not currently supported element "${dlgPropMultiInputEle.tagName}" as multi-prop dialog input element.`);
     }
   }
 }

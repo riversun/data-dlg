@@ -8,6 +8,7 @@ import DlgmgrTemplateFiller from './dlgmgr-template-filler';
 import { doCopyDialogInputToContext } from './bind-from-view-to-context';
 import { doShowContextToDialogInput, doShowMultiPropContextToDialogInput } from './bind-from-context-to-view';
 import doHandleChoiceEles from './create-html-multi-option-input';
+import CommonConfirmationDialog from './common-dialog';
 
 
 /**
@@ -43,6 +44,12 @@ export default class DialogManager {
     this.i18res = new I18nice();
     this.i18res.setFallback('en');
     this.templateFill.i18res = this.i18res;
+    this.dlgConfirmation = new CommonConfirmationDialog(this);
+  }
+
+  async showConfirmation(opt) {
+    const result = await this.dlgConfirmation.showConfirmation(opt);
+    return result;
   }
 
   /**
@@ -74,6 +81,26 @@ export default class DialogManager {
   }
 
   async setResourcesWithModel(model) {
+    const defaultResource = {
+      en: {
+        'common-yes': 'Yes',
+        'common-no': 'No',
+        'common-ok': 'OK',
+        'common-cancel': 'Cancel',
+        'common-apply': 'Apply',
+        'common-help': 'Help',
+      },
+      ja: {
+        'common-yes': 'はい',
+        'common-no': 'いいえ',
+        'common-ok': 'OK',
+        'common-cancel': 'キャンセル',
+        'common-apply': '適用',
+        'common-help': 'ヘルプ',
+      },
+    };
+
+    mergeDeeply({ op: 'overwrite-merge', object1: model, object2: defaultResource });
     this.i18res.init(model);
     return 'success';
   }
@@ -84,9 +111,8 @@ export default class DialogManager {
    * @returns {Promise<unknown>}
    */
   async setResourcesFromUrl(url) {
-    const stringsRes = await this.loadResourceFromUrl(url, 'json', 'setResourcesFromUrl');
-    this.i18res.init(stringsRes);
-
+    const model = await this.loadResourceFromUrl(url, 'json', 'setResourcesFromUrl');
+    await this.setResourcesWithModel(model);
     return 'success';
   }
 

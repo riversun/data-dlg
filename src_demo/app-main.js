@@ -31,7 +31,7 @@ export default class AppMain {
       userBestFriend: 'person_03',
       userFriends: ['person_03', 'person_06'],
       userBestPrefecture: 'pref_tokyo',
-      userProtectionEnabled:true,
+      userProtectionEnabled: true,
     };
 
   }
@@ -58,7 +58,64 @@ export default class AppMain {
 We're sorry for the inconvenience, but please give us enough time to reload your browser.\n
 ネットワークエラーが発生しましたお手数ですが時間をあけてからブラウザでリロードをお試しください\n`);
     }
+    this.setupDemoCommonDialogs();
     this.render();
+  }
+
+  setupDemoCommonDialogs() {
+    document.querySelector('#btnYesno').addEventListener('click', async (e) => {
+      const opt = {
+        type: 'yesno',
+        title: { res: 'label-demo-yesno-title' },
+        message: { res: 'label-demo-yesno-message', model: { 'user-name': 'Tom' } },
+      };
+      const result = await this.dialogMgr.showConfirmation(opt);
+      alert(result);
+    });
+    document.querySelector('#btnOkcancel').addEventListener('click', async (e) => {
+      const opt = {
+        type: 'okcancel',
+        title: { res: 'label-demo-okcancel-title' },
+        message: { res: 'label-demo-okcancel-message', model: { 'user-name': 'Tom' } },
+      };
+      const result = await this.dialogMgr.showConfirmation(opt);
+      alert(result);
+    });
+    document.querySelector('#btnOk').addEventListener('click', async (e) => {
+      const opt = {
+        type: 'ok',
+        title: { res: 'label-demo-ok-title' },
+        message: { res: 'label-demo-ok-message', model: { 'user-name': 'Tom' } },
+      };
+      const result = await this.dialogMgr.showConfirmation(opt);
+      alert(result);
+    });
+    document.querySelector('#btnCustom1').addEventListener('click', async (e) => {
+      const opt = {
+        type: 'okcancel',
+        positive: true,// positiveボタンの表示有無
+        negative: true,// positiveボタンの表示有無
+        neutral: true,// positiveボタンの表示有無
+        hasClose: false,//close buttonを持つか否か
+        title: '直接タイトルを書く',
+        message: 'メッセージも直接書く',
+        res: {
+          positive: "label-demo-btn-positive",
+          negative: "label-demo-btn-negative",
+          neutral: "label-demo-btn-neutral"
+        },
+        class:{
+          positive:"btn-success",
+          negative:"btn-danger",
+          neutral:"btn-warning",
+        }
+
+      };
+      const result = await this.dialogMgr.showConfirmation(opt);
+      alert(result);
+    });
+    document.querySelector('#btnCustom2').addEventListener('click', (e) => {
+    });
   }
 
   async buildViews() {
