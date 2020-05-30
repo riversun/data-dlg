@@ -104,17 +104,15 @@ We're sorry for the inconvenience, but please give us enough time to reload your
           negative: "label-demo-btn-negative",
           neutral: "label-demo-btn-neutral"
         },
-        class:{
-          positive:"btn-success",
-          negative:"btn-danger",
-          neutral:"btn-warning",
+        class: {
+          positive: "btn-success",
+          negative: "btn-danger",
+          neutral: "btn-warning",
         }
 
       };
       const result = await this.dialogMgr.showConfirmation(opt);
       alert(result);
-    });
-    document.querySelector('#btnCustom2').addEventListener('click', (e) => {
     });
   }
 
