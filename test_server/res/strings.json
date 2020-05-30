@@ -45,6 +45,8 @@
     "label-edit": "Edit",
     "label-ok": "OK",
     "label-cancel": "Cancel",
+    "label-delete": "Delete user",
+    "label-danger-area": "Danger Zone",
     "label-hobby-edit-dlg-title": "Select hobbies",
     "label-hobby-edit-explanation": "Please enter a hobby (multiple selections are possible)",
     "label-birthday": "birthday",
@@ -56,7 +58,16 @@
     "label-single-input-title": "Single Input Example",
     "label-single-input-title2": "Single Input Example(from res as model)",
     "label-tel-your-best-prefecture": "Tell your best prefecture",
-    "label-info-protection": "Enable information protection"
+    "label-info-protection": "Enable information protection",
+    "label-demo-yesno-title": "Yes/No dialog",
+    "label-demo-yesno-message": "This is Yes/No dialog message for #{user-name}.<br>Are you OK?",
+    "label-demo-okcancel-title": "OK/Cancel dialog",
+    "label-demo-okcancel-message": "This is OK/Cancel dialog message for #{user-name}.<br>Are you OK?",
+    "label-demo-ok-title": "OK only dialog",
+    "label-demo-ok-message": "This is OK only dialog message for #{user-name}.<br>Are you OK?",
+    "label-demo-btn-positive": "positive",
+    "label-demo-btn-negative": "negative",
+    "label-demo-btn-neutral": "neutral"
   },
   "ja": {
     "test": "テスト",
@@ -104,6 +115,8 @@
     "label-edit": "編集",
     "label-ok": "OK",
     "label-cancel": "キャンセル",
+    "label-danger-area": "危険な操作エリア",
+    "label-delete": "ユーザー削除",
     "label-hobby-edit-dlg-title": "趣味選択画面",
     "label-hobby-edit-explanation": "趣味を入力してください（複数選択可能です）",
     "label-birthday": "誕生日",
@@ -115,6 +128,12 @@
     "label-single-input-title": "単一選択サンプル",
     "label-single-input-title2": "単一選択サンプル（resから表示)",
     "label-tel-your-best-prefecture": "あなたの一番好きな都道府県を選択してください",
-    "label-info-protection": "情報保護を有効にする"
+    "label-info-protection": "情報保護を有効にする",
+    "label-demo-yesno-title": "はい・いいえ　ダイアログ",
+    "label-demo-yesno-message": "#{user-name}さん、これは「はい」「いいえ」で回答するダイアログのメッセージです。<br>よろしいですか？",
+    "label-demo-okcancel-title": "OK・キャンセル ダイアログ",
+    "label-demo-okcancel-message": "#{user-name}さん、これは「OK」「キャンセル」で回答するダイアログのメッセージです。<br>よろしいですか？",
+    "label-demo-ok-title": "OKのみダイアログ",
+    "label-demo-ok-message": "#{user-name}さん、これは「OK」のみで回答するダイアログのメッセージです。<br>よろしいですか？"
   }
 }

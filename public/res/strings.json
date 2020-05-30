@@ -1,5 +1,6 @@
 {
   "en": {
+    "test": "test",
     "label-title": "Edit information for #{user-name}",
     "label-comment-first-time": "Start first time registration.",
     "label-comment-update": "Please edit udpated info.",
@@ -44,6 +45,8 @@
     "label-edit": "Edit",
     "label-ok": "OK",
     "label-cancel": "Cancel",
+    "label-delete": "Delete user",
+    "label-danger-area": "Danger Zone",
     "label-hobby-edit-dlg-title": "Select hobbies",
     "label-hobby-edit-explanation": "Please enter a hobby (multiple selections are possible)",
     "label-birthday": "birthday",
@@ -67,6 +70,7 @@
     "label-demo-btn-neutral": "neutral"
   },
   "ja": {
+    "test": "テスト",
     "label-title": "#{user-name}さんの情報編集画面",
     "label-comment-first-time": "初回の登録をします",
     "label-comment-update": "アップデート情報を編集してください",
@@ -111,6 +115,8 @@
     "label-edit": "編集",
     "label-ok": "OK",
     "label-cancel": "キャンセル",
+    "label-danger-area": "危険な操作エリア",
+    "label-delete": "ユーザー削除",
     "label-hobby-edit-dlg-title": "趣味選択画面",
     "label-hobby-edit-explanation": "趣味を入力してください（複数選択可能です）",
     "label-birthday": "誕生日",

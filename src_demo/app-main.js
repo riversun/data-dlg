@@ -1,4 +1,4 @@
-import bsn from "bootstrap.native/dist/bootstrap-native-v4";
+import bsn from "../src_bsn_2.0.27/bootstrap-native-v4";//"bootstrap.native/dist/bootstrap-native-v4";
 import DialogManager from "../src/dialog-manager.js";
 import createDialog1 from './dialog-example1.js';
 import createDialog1_1 from './dialog-example1-1.js';
@@ -6,6 +6,7 @@ import createDialog2 from './dialog-example2.js';
 import createDialog3 from "./dialog-example3.js";
 import createDialog4 from "./dialog-example4.js";
 import createDialog5 from "./dialog-example5.js";
+import createDialog6 from "./dialog-example6.js";
 
 
 export default class AppMain {
@@ -81,6 +82,7 @@ We're sorry for the inconvenience, but please give us enough time to reload your
       const result = await this.dialogMgr.showConfirmation(opt);
       alert(result);
     });
+
     document.querySelector('#btnOk').addEventListener('click', async (e) => {
       const opt = {
         type: 'ok',
@@ -90,6 +92,7 @@ We're sorry for the inconvenience, but please give us enough time to reload your
       const result = await this.dialogMgr.showConfirmation(opt);
       alert(result);
     });
+
     document.querySelector('#btnCustom1').addEventListener('click', async (e) => {
       const opt = {
         type: 'okcancel',
@@ -114,6 +117,9 @@ We're sorry for the inconvenience, but please give us enough time to reload your
       const result = await this.dialogMgr.showConfirmation(opt);
       alert(result);
     });
+
+    document.querySelector('#btnCustom2').click();
+
   }
 
   async buildViews() {
@@ -123,6 +129,7 @@ We're sorry for the inconvenience, but please give us enough time to reload your
     await createDialog3(this.dialogMgr, { userData: this.userData, friends: this.friends });
     await createDialog4(this.dialogMgr, { userData: this.userData, friends: this.friends });
     await createDialog5(this.dialogMgr, { userData: this.userData });
+    await createDialog6(this.dialogMgr, { userData: this.userData });
 
     this.dialogMgr.activate();
   }

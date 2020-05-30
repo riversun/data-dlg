@@ -1,5 +1,6 @@
 import mergeDeeply from 'merge-deeply';
 import { typeOf } from './common-utils';
+import EventListenerHelper from "event-listener-helper";
 
 const COMMON_DIALOG_TEMPLATE = `<!-- -->
 <div class="modal-header">
@@ -21,6 +22,8 @@ export default class CommonConfirmationDialog {
   constructor(dialogMgr) {
     this.dialogMgr = dialogMgr;
 
+    this.numOfDialogPool = 1;
+    this.crrNum = 0;
     this.positiveListener = () => {
     };
     this.negativeListener = () => {
@@ -29,9 +32,14 @@ export default class CommonConfirmationDialog {
     };
 
     this.opt = null;
+    this.evh = new EventListenerHelper();
   }
 
   async showConfirmation(opt) {
+    this.crrNum += 1;
+    if (this.crrNum > this.numOfDialogPool - 1) {
+      this.crrNum = 0;
+    }
     this.opt = { type: 'yesno', res: {}, class: {} };
     mergeDeeply({ op: 'overwrite-merge', object1: this.opt, object2: opt });
 
@@ -59,13 +67,12 @@ export default class CommonConfirmationDialog {
       }
     }
     await this.init();
-    await this.dialogMgr.showDialog('data-dlg-common-confirmation', {
+    await this.dialogMgr.showDialog(`data-dlg-common-confirmation${this.crrNum}`, {
       params: {
         title: titleDisp, // this.opt.title || this.dialogMgr.t(this.opt.res.title),
         message: messageDisp, // this.opt.message || this.dialogMgr.t(this.opt.res.message),
       },
     });
-
     return new Promise((resolve) => {
       this.setOnPositiveListener(() => {
         resolve('positive');
@@ -169,6 +176,24 @@ export default class CommonConfirmationDialog {
    * @returns {Promise<void>}
    */
   async onDialogApply(data) {
+    // return new Promise((resolve, reject) => {
+    //     const dialogModel = data.dialog;
+    //     const dialogInstance = dialogModel.instance;
+    //
+    //     const element = dialogModel.element;
+    //     this.evh.addEventListener(element, 'hidden.bs.modal', async () => {
+    //       // ダイアログが完全に非表示になった
+    //       // 完全に非表示になってから、apply処理を終えることで、
+    //       // 次にすぐcommonDiaogが呼び出されても動作するようにする。
+    //       // （もし完全に非表示になる前に次のshowをよんでも、ダイアログは表示されないため)
+    //       await this.positiveListener();
+    //       setTimeout(() => {
+    //         resolve();
+    //       }, 100);
+    //     }, { listenerName: 'common-dialog-click-apply', once: true });// once:trueでlistenerは1回限りで消える
+    //     dialogInstance.hide();
+    //   }
+    // );
     const dialogModel = data.dialog;
     const dialogInstance = dialogModel.instance;
     dialogInstance.hide();
@@ -233,11 +258,11 @@ export default class CommonConfirmationDialog {
 
 
   async init() {
-    if (this.dialogMgr.getDialogModelById('data-dlg-common-confirmation')) {
+    if (this.dialogMgr.getDialogModelById(`data-dlg-common-confirmation${this.crrNum}`)) {
       return 'success';
     }
     await this.dialogMgr.createDialog({
-      id: 'data-dlg-common-confirmation',
+      id: `data-dlg-common-confirmation${this.crrNum}`,
       template: COMMON_DIALOG_TEMPLATE,
       onCreate: this.onDialogCreate.bind(this),
       onApply: this.onDialogApply.bind(this),

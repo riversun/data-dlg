@@ -1,0 +1,10 @@
+riversun added workaround into code of Bootstrap Native V4 v2.0.27 (https://github.com/thednp/bootstrap.native)
+
+added followings @ line1268
+
+    // riversun added start
+    this.forceRemoveOverlay = function() {
+      removeOverlay();
+    }
+    // riversun added end
+

@@ -15,7 +15,7 @@ module.exports = {
   coverageDirectory: "./coverage/",
   collectCoverage: true,
   coveragePathIgnorePatterns: [
-    "test", "test_server"
+    "test", "test_server","src_bsn_2.0.27"
   ],
   globalSetup: "./test_server/test-server-invoke",
   globalTeardown: "./test_server/test-server-finish",
