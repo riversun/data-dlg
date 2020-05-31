@@ -1265,11 +1265,7 @@
         this.show();
       }
     };
-    // riversun added start
-    this.forceRemoveOverlay = function() {
-      removeOverlay();
-    }
-    // riversun added end
+
     this.show = function() {
       if (hasClass(modal, showClass) || modal[isAnimating]) {
         return

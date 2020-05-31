@@ -1,10 +1,11 @@
 riversun added workaround into code of Bootstrap Native V4 v2.0.27 (https://github.com/thednp/bootstrap.native)
 
-added followings @ line1268
+added followings @ line1278
 
-    // riversun added start
-    this.forceRemoveOverlay = function() {
-      removeOverlay();
-    }
-    // riversun added end
+          // riversun added start
+          // 実際のDOMからは modal-backdropクラス（をもった要素）が消えているのに、
+          // overlay変数にはなぜかDIV要素の参照残ってしまっている現象があるため、
+          // DOMツリーからmodal-backdropクラス（をもった要素）が消えたことを確認するよう修正
+          overlay = queryElement('.' + modalBackdropString);
+          // riversun added end
 
