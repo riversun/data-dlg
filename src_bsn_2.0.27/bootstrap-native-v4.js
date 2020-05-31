@@ -1289,7 +1289,13 @@
           // overlay変数にはなぜかDIV要素の参照残ってしまっている現象があるため、
           // DOMツリーからmodal-backdropクラス（をもった要素）が消えたことを確認するよう修正
           overlay = queryElement('.' + modalBackdropString);
+          if (!overlay && modalOverlay) {
+            // overlayがnullなのに、modalOverlayが1のまま残り続ける場合がある
+            // BSN.initialize多用のとき？　その場合にそなえ、modalOverlayも0リセットする
+            modalOverlay = 0;
+          }
           // riversun added end
+
           !modalOverlay && !overlay && createOverlay();
         }
 
