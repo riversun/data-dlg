@@ -95,11 +95,10 @@ We're sorry for the inconvenience, but please give us enough time to reload your
 
     document.querySelector('#btnCustom1').addEventListener('click', async (e) => {
       const opt = {
-        type: 'okcancel',
         positive: true,// positiveボタンの表示有無
         negative: true,// positiveボタンの表示有無
         neutral: true,// positiveボタンの表示有無
-        hasClose: false,//close buttonを持つか否か
+        close: false,//close buttonを持つか否か
         title: '直接タイトルを書く',
         message: 'メッセージも直接書く',
         res: {
@@ -118,7 +117,7 @@ We're sorry for the inconvenience, but please give us enough time to reload your
       alert(result);
     });
 
-    document.querySelector('#btnCustom2').click();
+    // document.querySelector('#btnCustom2').click();
 
   }
 

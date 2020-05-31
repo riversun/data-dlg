@@ -38,11 +38,24 @@ export default class CommonConfirmationDialog {
     this.evh = new EventListenerHelper();
   }
 
+  /**
+   * 現在アクティブなコモンダイアログのdialogModelを返す
+   * @returns {string}
+   */
+  getDialogId() {
+    return `data-dlg-common-confirmation${this.crrDialogNumber}`;
+  }
+
+  /**
+   * 現在アクティブなコモンダイアログのdialogModelを返す
+   * @returns
+   */
+  getNextConfirmationDialogId() {
+    return this.getDialogId();
+  }
+
   async showConfirmation(opt) {
-    this.crrDialogNumber += 1;
-    if (this.crrDialogNumber > this.numOfDialogPool - 1) {
-      this.crrDialogNumber = 0;
-    }
+
     this.opt = { type: 'yesno', res: {}, class: {} };
     mergeDeeply({ op: 'overwrite-merge', object1: this.opt, object2: opt });
 
@@ -70,13 +83,19 @@ export default class CommonConfirmationDialog {
       }
     }
     await this.init();
-    await this.dialogMgr.showDialog(`data-dlg-common-confirmation${this.crrDialogNumber}`, {
+    await this.dialogMgr.showDialog(this.getDialogId(), {
       params: {
         title: titleDisp, // this.opt.title || this.dialogMgr.t(this.opt.res.title),
         message: messageDisp, // this.opt.message || this.dialogMgr.t(this.opt.res.message),
       },
     });
+
     return new Promise((resolve) => {
+      //次に表示するダイアログにむけて通し番号をアップデートする
+      this.crrDialogNumber += 1;
+      if (this.crrDialogNumber > this.numOfDialogPool - 1) {
+        this.crrDialogNumber = 0;
+      }
       this.setOnPositiveListener(() => {
         resolve('positive');
       });
@@ -132,7 +151,7 @@ export default class CommonConfirmationDialog {
         isNeutral: false,
         hasClose: false,
         'data-dlg-common-confirmation-label-positive': this.dialogMgr.t('common-ok'),
-        'data-dlg-common-confirmation-label-negative': this.dialogMgr.t('common-cancel'),
+        'data-dlg-common-confirmation-label-negative': null,
         'data-dlg-common-confirmation-class-positive': 'btn-primary',
         'data-dlg-common-confirmation-class-negative': 'btn-secondary',
         'data-dlg-common-confirmation-class-neutral': 'btn-secondary',
@@ -148,6 +167,8 @@ export default class CommonConfirmationDialog {
     mapBoolean('positive', 'isPositive');
     mapBoolean('negative', 'isNegative');
     mapBoolean('neutral', 'isNeutral');
+    mapBoolean('close', 'hasClose');
+
 
     const mapRes = (optRes, contextRes) => {
       if (this.opt.res[optRes]) {
@@ -179,24 +200,6 @@ export default class CommonConfirmationDialog {
    * @returns {Promise<void>}
    */
   async onDialogApply(data) {
-    // return new Promise((resolve, reject) => {
-    //     const dialogModel = data.dialog;
-    //     const dialogInstance = dialogModel.instance;
-    //
-    //     const element = dialogModel.element;
-    //     this.evh.addEventListener(element, 'hidden.bs.modal', async () => {
-    //       // ダイアログが完全に非表示になった
-    //       // 完全に非表示になってから、apply処理を終えることで、
-    //       // 次にすぐcommonDiaogが呼び出されても動作するようにする。
-    //       // （もし完全に非表示になる前に次のshowをよんでも、ダイアログは表示されないため)
-    //       await this.positiveListener();
-    //       setTimeout(() => {
-    //         resolve();
-    //       }, 100);
-    //     }, { listenerName: 'common-dialog-click-apply', once: true });// once:trueでlistenerは1回限りで消える
-    //     dialogInstance.hide();
-    //   }
-    // );
     const dialogModel = data.dialog;
     const dialogInstance = dialogModel.instance;
     dialogInstance.hide();
@@ -259,13 +262,12 @@ export default class CommonConfirmationDialog {
     }
   }
 
-
   async init() {
-    if (this.dialogMgr.getDialogModelById(`data-dlg-common-confirmation${this.crrDialogNumber}`)) {
+    if (this.dialogMgr.getDialogModelById(this.getDialogId())) {
       return 'success';
     }
     await this.dialogMgr.createDialog({
-      id: `data-dlg-common-confirmation${this.crrDialogNumber}`,
+      id: this.getDialogId(),
       template: COMMON_DIALOG_TEMPLATE,
       onCreate: this.onDialogCreate.bind(this),
       onApply: this.onDialogApply.bind(this),

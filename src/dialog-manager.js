@@ -47,10 +47,25 @@ export default class DialogManager {
     this.dlgConfirmation = new CommonConfirmationDialog(this);
   }
 
+  /**
+   * 確認ダイアログを表示する
+   * @param opt
+   * @returns {Promise<unknown>}
+   */
   async showConfirmation(opt) {
     const result = await this.dlgConfirmation.showConfirmation(opt);
     return result;
   }
+
+  /**
+   * 次にshowConrimationを呼び出すときに表示される確認ダイアログのdialogModelを取得する
+   * （showConfirmationはawaitで使う前提なので、事前に次に表示される予定の確認ダイアログのdialogModelを取得できるようにしている）
+   * @returns
+   */
+  getNextConfirmationDialogId() {
+    return this.dlgConfirmation.getNextConfirmationDialogId();
+  }
+
 
   /**
    * ダイアログ用のテンプレートHTMLをurlから読み込む設定にした場合、

@@ -15,95 +15,376 @@ function createDlgMgr() {
 
 
 describe('DialogManager', () => {
-  describe('deleteDialog()', () => {
-    test('[dialog1]delete dialog', async () => {
-        const userData = getUserData();
-        document.body.innerHTML = INNER_HTML;
+  describe('showConfirmation()', () => {
+
+    // yesnoダイアログで YES をクリックすると positive が返ることを確認
+    test('[yesno dialog] YES clicked', async (done) => {
+      document.body.innerHTML = INNER_HTML;
+      const dialogMgr = createDlgMgr();
+      await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
+      const opt = {
+        type: 'yesno',
+        title: { res: 'label-demo-yesno-title' },
+        message: { res: 'label-demo-yesno-message', model: { 'user-name': 'Tom' } },
+      };
+      // <button type="button" class="btn #{data-dlg-common-confirmation-class-positive}" data-dlg-hidden="isPositive" data-dlg-action="apply">#{data-dlg-common-confirmation-label-positive}</button>
+      //     <button type="button" class="btn #{data-dlg-common-confirmation-class-negative}" data-dlg-hidden="isNegative" data-dlg-action="cancel">#{data-dlg-common-confirmation-label-negative}</button>
+      //     <button type="button" class="btn #{data-dlg-common-confirmation-class-neutral}" data-dlg-hidden="isNeutral" data-dlg-action="neutral">#{data-dlg-common-confirmation-label-neutral}</button>
+
+      const confDialogId = dialogMgr.getNextConfirmationDialogId();
+      setTimeout(() => {
+        const confDialogModel = dialogMgr.getDialogModelById(confDialogId);
+        const confDialogElement = confDialogModel.element;
+        const btnConfPositive = confDialogElement.querySelector('[data-dlg-action=apply]');
+        const btnConfNegative = confDialogElement.querySelector('.btn[data-dlg-action=cancel]');
+        const btnConfNeutral = confDialogElement.querySelector('[data-dlg-action=neutral]');
+        const btnConfClose = confDialogElement.querySelector('.close[data-dlg-action=cancel]');
+        const innerHTML = confDialogElement.innerHTML;
+
+        //ボタンの表示非表示を確認
+        expect(btnConfPositive.style.display).toBe('block');
+        expect(btnConfNegative.style.display).toBe('block');
+        expect(btnConfNeutral.style.display).toBe('none');
+        expect(btnConfClose.style.display).toBe('block');
+
+        //ボタン表示文字列を確認
+        expect(btnConfPositive.innerHTML).toContain(dialogMgr.t('common-yes'));
+        expect(btnConfNegative.innerHTML).toContain(dialogMgr.t('common-no'));
+        expect(btnConfNeutral.innerHTML).toBeFalsy();
+
+        //指定したリソースがダイアログに含まれていること
+        expect(innerHTML).toContain(dialogMgr.t('label-demo-yesno-title'));
+        expect(innerHTML).toContain(dialogMgr.t('label-demo-yesno-message', { 'user-name': 'Tom' }));
+
+        // showConfirmationするまで500ミリ秒まった後、
+        // 確認ダイアログ上のapplyボタンをクリックする
+        btnConfPositive.click();
+      }, 1000);
+      const result = await dialogMgr.showConfirmation(opt);
+      expect(result).toBe('positive');
+      done();
+    });//test
+
+    // yesnoダイアログで NO をクリックすると negative が返ることを確認
+    test('[yesno dialog] NO clicked', async (done) => {
+      document.body.innerHTML = INNER_HTML;
+      const dialogMgr = createDlgMgr();
+      await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
+      const opt = {
+        type: 'yesno',
+        title: { res: 'label-demo-yesno-title' },
+        message: { res: 'label-demo-yesno-message', model: { 'user-name': 'Tom' } },
+      };
+      const confDialogId = dialogMgr.getNextConfirmationDialogId();
+
+      setTimeout(() => {
+        const confDialogModel = dialogMgr.getDialogModelById(confDialogId);
+        const confDialogElement = confDialogModel.element;
+        const btnConfPositive = confDialogElement.querySelector('[data-dlg-action=apply]');
+        const btnConfNegative = confDialogElement.querySelector('.btn[data-dlg-action=cancel]');
+        // showConfirmationするまで1000ミリ秒まった後、
+        // 確認ダイアログ上のapplyボタンをクリックする
+        btnConfNegative.click();
+      }, 1000);
+      const result = await dialogMgr.showConfirmation(opt);
+      expect(result).toBe('negative');
+      done();
+
+    });//test
+
+    // okcancelダイアログで OK をクリックすると positive が返ることを確認
+    test('[okcancel dialog] OK clicked', async (done) => {
+      document.body.innerHTML = INNER_HTML;
+      const dialogMgr = createDlgMgr();
+      await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
+      const opt = {
+        type: 'okcancel',
+        title: { res: 'label-demo-okcancel-title' },
+        message: { res: 'label-demo-okcancel-message', model: { 'user-name': 'Tom' } },
+      };
+
+      const confDialogId = dialogMgr.getNextConfirmationDialogId();
+      setTimeout(() => {
+        const confDialogModel = dialogMgr.getDialogModelById(confDialogId);
+        const confDialogElement = confDialogModel.element;
+        const btnConfPositive = confDialogElement.querySelector('[data-dlg-action=apply]');
+        const btnConfNegative = confDialogElement.querySelector('.btn[data-dlg-action=cancel]');
+        const btnConfNeutral = confDialogElement.querySelector('[data-dlg-action=neutral]');
+        const btnConfClose = confDialogElement.querySelector('.close[data-dlg-action=cancel]');
+        const innerHTML = confDialogElement.innerHTML;
+
+        //ボタンの表示非表示を確認
+        expect(btnConfPositive.style.display).toBe('block');
+        expect(btnConfNegative.style.display).toBe('block');
+        expect(btnConfNeutral.style.display).toBe('none');
+        expect(btnConfClose.style.display).toBe('block');
+
+        //ボタン表示文字列を確認
+        expect(btnConfPositive.innerHTML).toContain(dialogMgr.t('common-ok'));
+        expect(btnConfNegative.innerHTML).toContain(dialogMgr.t('common-cancel'));
+        expect(btnConfNeutral.innerHTML).toBeFalsy();
+
+        //指定したリソースがダイアログに含まれていること
+        expect(innerHTML).toContain(dialogMgr.t('label-demo-okcancel-title'));
+        expect(innerHTML).toContain(dialogMgr.t('label-demo-okcancel-message', { 'user-name': 'Tom' }));
+
+        // showConfirmationするまで500ミリ秒まった後、
+        // 確認ダイアログ上のapplyボタンをクリックする
+        btnConfPositive.click();
+      }, 1000);
+      const result = await dialogMgr.showConfirmation(opt);
+      expect(result).toBe('positive');
+      done();
+    });//test
+
+    // okcancelダイアログで Cancel をクリックすると negative が返ることを確認
+    test('[okcancel dialog] Cancel clicked', async (done) => {
+      document.body.innerHTML = INNER_HTML;
+      const dialogMgr = createDlgMgr();
+      await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
+      const opt = {
+        type: 'okcancel',
+        title: { res: 'label-demo-okcancel-title' },
+        message: { res: 'label-demo-okcancel-message', model: { 'user-name': 'Tom' } },
+      };
+      const confDialogId = dialogMgr.getNextConfirmationDialogId();
+      setTimeout(() => {
+        const confDialogModel = dialogMgr.getDialogModelById(confDialogId);
+        const confDialogElement = confDialogModel.element;
+        const btnConfNegative = confDialogElement.querySelector('.btn[data-dlg-action=cancel]');
+        btnConfNegative.click();
+      }, 1000);
+      const result = await dialogMgr.showConfirmation(opt);
+      expect(result).toBe('negative');
+      done();
+    });//test
+
+    // okオンリーダイアログで OK をクリックすると positive が返ることを確認、closeボタンが無いことを確認
+    test('[ok dialog] OK clicked', async (done) => {
+      document.body.innerHTML = INNER_HTML;
+      const dialogMgr = createDlgMgr();
+      await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
+      const opt = {
+        type: 'ok',
+        title: { res: 'label-demo-ok-title' },
+        message: { res: 'label-demo-ok-message', model: { 'user-name': 'Tom' } },
+      };
+      // <button type="button" class="btn #{data-dlg-common-confirmation-class-positive}" data-dlg-hidden="isPositive" data-dlg-action="apply">#{data-dlg-common-confirmation-label-positive}</button>
+      //     <button type="button" class="btn #{data-dlg-common-confirmation-class-negative}" data-dlg-hidden="isNegative" data-dlg-action="cancel">#{data-dlg-common-confirmation-label-negative}</button>
+      //     <button type="button" class="btn #{data-dlg-common-confirmation-class-neutral}" data-dlg-hidden="isNeutral" data-dlg-action="neutral">#{data-dlg-common-confirmation-label-neutral}</button>
+
+      const confDialogId = dialogMgr.getNextConfirmationDialogId();
+      setTimeout(() => {
+        const confDialogModel = dialogMgr.getDialogModelById(confDialogId);
+        const confDialogElement = confDialogModel.element;
+        const btnConfPositive = confDialogElement.querySelector('[data-dlg-action=apply]');
+        const btnConfNegative = confDialogElement.querySelector('.btn[data-dlg-action=cancel]');
+        const btnConfNeutral = confDialogElement.querySelector('[data-dlg-action=neutral]');
+        const btnConfClose = confDialogElement.querySelector('.close[data-dlg-action=cancel]');
+        const innerHTML = confDialogElement.innerHTML;
+
+        //ボタンの表示非表示を確認
+        expect(btnConfPositive.style.display).toBe('block');// 表示されるのはokのみ
+        expect(btnConfNegative.style.display).toBe('none');//
+        expect(btnConfNeutral.style.display).toBe('none');
+        expect(btnConfClose.style.display).toBe('none');// closeボタンも表示されない
+
+        //ボタン表示文字列を確認
+        expect(btnConfPositive.innerHTML).toContain(dialogMgr.t('common-ok'));
+        expect(btnConfNegative.innerHTML).toBeFalsy();
+        expect(btnConfNeutral.innerHTML).toBeFalsy();
+
+        //指定したリソースがダイアログに含まれていること
+        expect(innerHTML).toContain(dialogMgr.t('label-demo-ok-title'));
+        expect(innerHTML).toContain(dialogMgr.t('label-demo-ok-message', { 'user-name': 'Tom' }));
+
+        // showConfirmationするまで1000ミリ秒まった後、
+        // 確認ダイアログ上のapplyボタンをクリックする
+        btnConfPositive.click();
+      }, 1000);
+      const result = await dialogMgr.showConfirmation(opt);
+      expect(result).toBe('positive');
+      done();
+    });//test
+
+    // 確認ダイアログをカスタムして、positive,negative,neutralの3種類表示。ボタンのスタイル変更、positiveクリック
+    test('[custom confirmation dialog] 3 buttons and click positive', async (done) => {
+      document.body.innerHTML = INNER_HTML;
+      const dialogMgr = createDlgMgr();
+      await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
+      const opt = {
+        type: 'okcancel',
+        positive: true,// positiveボタンの表示有無
+        negative: true,// positiveボタンの表示有無
+        neutral: true,// positiveボタンの表示有無
+        close: false,//close buttonを持つか否か
+        title: '直接タイトルを書く',
+        message: 'メッセージも直接書く',
+        res: {
+          positive: "label-demo-btn-positive",
+          negative: "label-demo-btn-negative",
+          neutral: "label-demo-btn-neutral"
+        },
+        class: {
+          positive: "btn-success",
+          negative: "btn-danger",
+          neutral: "btn-warning",
+        }
+
+      };
+      // <button type="button" class="btn #{data-dlg-common-confirmation-class-positive}" data-dlg-hidden="isPositive" data-dlg-action="apply">#{data-dlg-common-confirmation-label-positive}</button>
+      //     <button type="button" class="btn #{data-dlg-common-confirmation-class-negative}" data-dlg-hidden="isNegative" data-dlg-action="cancel">#{data-dlg-common-confirmation-label-negative}</button>
+      //     <button type="button" class="btn #{data-dlg-common-confirmation-class-neutral}" data-dlg-hidden="isNeutral" data-dlg-action="neutral">#{data-dlg-common-confirmation-label-neutral}</button>
+
+      const confDialogId = dialogMgr.getNextConfirmationDialogId();
+      setTimeout(() => {
+        const confDialogModel = dialogMgr.getDialogModelById(confDialogId);
+        const confDialogElement = confDialogModel.element;
+        const btnConfPositive = confDialogElement.querySelector('[data-dlg-action=apply]');
+        const btnConfNegative = confDialogElement.querySelector('.btn[data-dlg-action=cancel]');
+        const btnConfNeutral = confDialogElement.querySelector('[data-dlg-action=neutral]');
+        const btnConfClose = confDialogElement.querySelector('.close[data-dlg-action=cancel]');
+        const innerHTML = confDialogElement.innerHTML;
+
+        //ボタンの表示非表示を確認
+        expect(btnConfPositive.style.display).toBe('block');// 表示されるのはokのみ
+        expect(btnConfNegative.style.display).toBe('block');//
+        expect(btnConfNeutral.style.display).toBe('block');
+        expect(btnConfClose.style.display).toBe('none');// closeボタンも表示されない
+
+        //ボタン表示文字列を確認
+        expect(btnConfPositive.innerHTML).toContain(dialogMgr.t('label-demo-btn-positive'));
+        expect(btnConfNegative.innerHTML).toContain(dialogMgr.t('label-demo-btn-negative'));
+        expect(btnConfNeutral.innerHTML).toContain(dialogMgr.t('label-demo-btn-neutral'));
+
+        //ボタンのスタイルを確認
+        expect(btnConfPositive.className).toContain('btn-success');
+        expect(btnConfNegative.className).toContain('btn-danger');
+        expect(btnConfNeutral.className).toContain('btn-warning');
+
+        //指定したリソースがダイアログに含まれていること
+        expect(innerHTML).toContain('直接タイトルを書く');
+        expect(innerHTML).toContain('メッセージも直接書く');
+
+        // showConfirmationするまで1000ミリ秒まった後、
+        // 確認ダイアログ上のapplyボタンをクリックする
+        btnConfPositive.click();
+      }, 1000);
+      const result = await dialogMgr.showConfirmation(opt);
+      expect(result).toBe('positive');
+      done();
+
+
+    });//test
+
+    // 確認ダイアログをカスタムして、positive,negative,neutralの3種類表示。ボタンのスタイル変更、negativeクリック
+    test('[custom confirmation dialog] 3 buttons and click negative', async (done) => {
+      document.body.innerHTML = INNER_HTML;
+      const dialogMgr = createDlgMgr();
+      await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
+      const opt = {
+        type: 'okcancel',
+        positive: true,// positiveボタンの表示有無
+        negative: true,// positiveボタンの表示有無
+        neutral: true,// positiveボタンの表示有無
+        close: false,//close buttonを持つか否か
+        title: '直接タイトルを書く',
+        message: 'メッセージも直接書く',
+        res: {
+          positive: "label-demo-btn-positive",
+          negative: "label-demo-btn-negative",
+          neutral: "label-demo-btn-neutral"
+        },
+        class: {
+          positive: "btn-success",
+          negative: "btn-danger",
+          neutral: "btn-warning",
+        }
+
+      };
+      const confDialogId = dialogMgr.getNextConfirmationDialogId();
+      setTimeout(() => {
+        const confDialogModel = dialogMgr.getDialogModelById(confDialogId);
+        const confDialogElement = confDialogModel.element;
+        const btnConfPositive = confDialogElement.querySelector('[data-dlg-action=apply]');
+        const btnConfNegative = confDialogElement.querySelector('.btn[data-dlg-action=cancel]');
+        const btnConfNeutral = confDialogElement.querySelector('[data-dlg-action=neutral]');
+        // showConfirmationするまで1000ミリ秒まった後、
+        // 確認ダイアログ上のapplyボタンをクリックする
+        btnConfNegative.click();
+      }, 1000);
+      const result = await dialogMgr.showConfirmation(opt);
+      expect(result).toBe('negative');
+      done();
+    });//test
+// 確認ダイアログをカスタムして、positive,negative,neutralの3種類表示。ボタンのスタイル変更、neutralクリック
+    test('[custom confirmation dialog] 3 buttons and click neutral', async (done) => {
+      document.body.innerHTML = INNER_HTML;
+      const dialogMgr = createDlgMgr();
+      await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
+      const opt = {
+        type: 'okcancel',
+        positive: true,// positiveボタンの表示有無
+        negative: true,// positiveボタンの表示有無
+        neutral: true,// positiveボタンの表示有無
+        close: false,//close buttonを持つか否か
+        title: '直接タイトルを書く',
+        message: 'メッセージも直接書く',
+        res: {
+          positive: "label-demo-btn-positive",
+          negative: "label-demo-btn-negative",
+          neutral: "label-demo-btn-neutral"
+        },
+        class: {
+          positive: "btn-success",
+          negative: "btn-danger",
+          neutral: "btn-warning",
+        }
+
+      };
+      const confDialogId = dialogMgr.getNextConfirmationDialogId();
+      setTimeout(() => {
+        const confDialogModel = dialogMgr.getDialogModelById(confDialogId);
+        const confDialogElement = confDialogModel.element;
+        const btnConfPositive = confDialogElement.querySelector('[data-dlg-action=apply]');
+        const btnConfNegative = confDialogElement.querySelector('.btn[data-dlg-action=cancel]');
+        const btnConfNeutral = confDialogElement.querySelector('[data-dlg-action=neutral]');
+        // showConfirmationするまで1000ミリ秒まった後、
+        // 確認ダイアログ上のapplyボタンをクリックする
+        btnConfNeutral.click();
+      }, 1000);
+      const result = await dialogMgr.showConfirmation(opt);
+      expect(result).toBe('neutral');
+      done();
+    });//test
+
+  });// describe
+
+  describe('setLocale()', () => {
+    test('set "ja" ', async () => {
         const dialogMgr = createDlgMgr();
+        dialogMgr.setLocale('ja');
+
         await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
-        // Setup condition input dialog
-        await dialogMgr.createDialog({
-          id: 'dlg-test-1',
-          url: `${SERVER_ENDPOINT}/view/dlg-test-1-general-inputs.html`,
-          onCreate: (data) => {
-            const dialogModel = data.dialog;
-            const dialogId = dialogModel.id;
-            const dialogTemplate = dialogModel.template;
-            const dialogElement = dialogModel.element;
-            const dialogInstance = dialogModel.instance;//BSNダイアログのインスタンス
-            const dialogContext = dialogModel.context;
-            const dialogOpener = dialogModel.opener;
-            const dialogParams = dialogModel.params;//extraなパラメータ格納用オブジェクト
-            const dialogCallback = dialogModel.callback;
-            const openerElement = dialogOpener ? dialogOpener.element : null;// DATA-APIによってダイアログを開いた要素
-
-            dialogModel.context = {};
-
-            const copyToPropNames = ['userResidence', 'userName', 'userAge', 'userHobbies', 'userProtectionEnabled'];
-            dialogMgr.bindModelToContext(
-              userData, dialogModel.context, copyToPropNames);
-
-          },
-          onApply: (data) => {
-          },
-          onCancel: (data) => {
-          },
-
-        });//createDialog
-        dialogMgr.activate();// ダイアログ関連のイベント登録
-        BSN.initCallback();// Bootstrap4のDataAPIを有効化
-        expect(dialogMgr.getDialogModelById('dlg-test-1')).toBeTruthy();
-        //削除の確認
-        dialogMgr.deleteDialog('dlg-test-1');
-        expect(dialogMgr.getDialogModelById('dlg-test-1')).toBeFalsy();
-
-        // re-delete
-        expect(dialogMgr.deleteDialog('dlg-test-1')).toBe(false);
+        expect(dialogMgr.t('test')).toBe('テスト');
       }
     );//test
-  });
-  describe('showDialog()', () => {
-    test('[dialog1]showDialog', async (done) => {
-        const userData = getUserData();
-        document.body.innerHTML = INNER_HTML;
+    test('set "en" ', async () => {
         const dialogMgr = createDlgMgr();
+        dialogMgr.setLocale('en');
         await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
-        // Setup condition input dialog
-        await dialogMgr.createDialog({
-          id: 'dlg-test-1',
-          url: `${SERVER_ENDPOINT}/view/dlg-test-1-general-inputs.html`,
-          onCreate: (data) => {
-            const dialogModel = data.dialog;
-            const dialogId = dialogModel.id;
-            const dialogTemplate = dialogModel.template;
-            const dialogElement = dialogModel.element;
-            const dialogInstance = dialogModel.instance;//BSNダイアログのインスタンス
-            const dialogContext = dialogModel.context;
-            const dialogOpener = dialogModel.opener;
-            const dialogParams = dialogModel.params;//extraなパラメータ格納用オブジェクト
-            const dialogCallback = dialogModel.callback;
-            const openerElement = dialogOpener ? dialogOpener.element : null;// DATA-APIによってダイアログを開いた要素
-
-
-            expect(dialogContext.exampleKey).toBe('exampleValue');
-            done();
-
-          },
-          onApply: (data) => {
-          },
-          onCancel: (data) => {
-          },
-
-        });//createDialog
-        dialogMgr.activate();// ダイアログ関連のイベント登録
-        BSN.initCallback();// Bootstrap4のDataAPIを有効化
-
-        dialogMgr.showDialog('dlg-test-1', { context: { exampleKey: 'exampleValue' } });
-
+        expect(dialogMgr.t('test')).toBe('test');
       }
     );//test
-  });
-
+  });// describe
+  describe('setResourcesFromUrl()', () => {
+    test('Default', async () => {
+        const dialogMgr = createDlgMgr();
+        await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
+        expect(dialogMgr.t('test')).toBe('test');
+      }
+    );
+  });// describe
   describe('setResourcesWithModel()', () => {
     // url取得ではなくリソースをモデルで指定する
     test('[dialog1] default', async (done) => {
@@ -208,8 +489,7 @@ describe('DialogManager', () => {
 
       }
     );//test
-  });
-
+  });// describe
   describe('loadResourceFromUrl()', () => {
     // ダイアログを表示したあと、ビューに値を入力し値をApplyしたとっきContextに正しく反映されているかを確認する
     test('default', async (done) => {
@@ -229,8 +509,7 @@ describe('DialogManager', () => {
           done();
         });
     });
-  });
-
+  });// describe
   describe('setLoadTemplateOnOpen()', () => {
     // ダイアログを表示したあと、ビューに値を入力し値をApplyしたとっきContextに正しく反映されているかを確認する
     test('[dialog1] default', async (done) => {
@@ -424,7 +703,7 @@ describe('DialogManager', () => {
       }
     );//test
 
-  });
+  });// describe
   describe('createDialog()', () => {
 
     test('[dialog1]click to open dialog', async (done) => {
@@ -1278,11 +1557,6 @@ describe('DialogManager', () => {
 
             // ダイアログを閉じる
             dialogInstance.hide();
-
-            console.log("編集終了");
-            console.log(userData);
-
-
           },
           onCancel: (data) => {
             const dialogModel = data.dialog;
@@ -1371,10 +1645,6 @@ describe('DialogManager', () => {
 
             // ダイアログを閉じる
             dialogInstance.hide();
-
-            console.log("編集終了");
-            console.log(userData);
-
 
           },
           onCancel: (data) => {
@@ -1752,32 +2022,92 @@ describe('DialogManager', () => {
 
 
   });// describe
-  describe('setResourcesFromUrl()', () => {
-    test('Default', async () => {
+  describe('deleteDialog()', () => {
+    test('[dialog1]delete dialog', async () => {
+        const userData = getUserData();
+        document.body.innerHTML = INNER_HTML;
         const dialogMgr = createDlgMgr();
         await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
-        expect(dialogMgr.t('test')).toBe('test');
-      }
-    );
-  });// describe
+        // Setup condition input dialog
+        await dialogMgr.createDialog({
+          id: 'dlg-test-1',
+          url: `${SERVER_ENDPOINT}/view/dlg-test-1-general-inputs.html`,
+          onCreate: (data) => {
+            const dialogModel = data.dialog;
+            const dialogId = dialogModel.id;
+            const dialogTemplate = dialogModel.template;
+            const dialogElement = dialogModel.element;
+            const dialogInstance = dialogModel.instance;//BSNダイアログのインスタンス
+            const dialogContext = dialogModel.context;
+            const dialogOpener = dialogModel.opener;
+            const dialogParams = dialogModel.params;//extraなパラメータ格納用オブジェクト
+            const dialogCallback = dialogModel.callback;
+            const openerElement = dialogOpener ? dialogOpener.element : null;// DATA-APIによってダイアログを開いた要素
 
+            dialogModel.context = {};
 
-  describe('setLocale()', () => {
-    test('set "ja" ', async () => {
-        const dialogMgr = createDlgMgr();
-        dialogMgr.setLocale('ja');
+            const copyToPropNames = ['userResidence', 'userName', 'userAge', 'userHobbies', 'userProtectionEnabled'];
+            dialogMgr.bindModelToContext(
+              userData, dialogModel.context, copyToPropNames);
 
-        await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
-        expect(dialogMgr.t('test')).toBe('テスト');
+          },
+          onApply: (data) => {
+          },
+          onCancel: (data) => {
+          },
+
+        });//createDialog
+        dialogMgr.activate();// ダイアログ関連のイベント登録
+        BSN.initCallback();// Bootstrap4のDataAPIを有効化
+        expect(dialogMgr.getDialogModelById('dlg-test-1')).toBeTruthy();
+        //削除の確認
+        dialogMgr.deleteDialog('dlg-test-1');
+        expect(dialogMgr.getDialogModelById('dlg-test-1')).toBeFalsy();
+
+        // re-delete
+        expect(dialogMgr.deleteDialog('dlg-test-1')).toBe(false);
       }
     );//test
-    test('set "en" ', async () => {
+  });// describe
+  describe('showDialog()', () => {
+    test('[dialog1]showDialog', async (done) => {
+        const userData = getUserData();
+        document.body.innerHTML = INNER_HTML;
         const dialogMgr = createDlgMgr();
-        dialogMgr.setLocale('en');
         await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
-        expect(dialogMgr.t('test')).toBe('test');
+        // Setup condition input dialog
+        await dialogMgr.createDialog({
+          id: 'dlg-test-1',
+          url: `${SERVER_ENDPOINT}/view/dlg-test-1-general-inputs.html`,
+          onCreate: (data) => {
+            const dialogModel = data.dialog;
+            const dialogId = dialogModel.id;
+            const dialogTemplate = dialogModel.template;
+            const dialogElement = dialogModel.element;
+            const dialogInstance = dialogModel.instance;//BSNダイアログのインスタンス
+            const dialogContext = dialogModel.context;
+            const dialogOpener = dialogModel.opener;
+            const dialogParams = dialogModel.params;//extraなパラメータ格納用オブジェクト
+            const dialogCallback = dialogModel.callback;
+            const openerElement = dialogOpener ? dialogOpener.element : null;// DATA-APIによってダイアログを開いた要素
+
+
+            expect(dialogContext.exampleKey).toBe('exampleValue');
+            done();
+
+          },
+          onApply: (data) => {
+          },
+          onCancel: (data) => {
+          },
+
+        });//createDialog
+        dialogMgr.activate();// ダイアログ関連のイベント登録
+        BSN.initCallback();// Bootstrap4のDataAPIを有効化
+
+        dialogMgr.showDialog('dlg-test-1', { context: { exampleKey: 'exampleValue' } });
+
       }
     );//test
   });// describe
-
 });

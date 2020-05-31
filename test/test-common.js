@@ -12,6 +12,14 @@ export const INNER_HTML = `<!-- -->
 <input id="text4" type="text" size=80 data-dlg="dlg-test-4"></input>
 <label>単一選択：SELECT（i18Nresからオブジェクトで選択）</label><br>
 <input id="text5" type="text" size=80 data-dlg="dlg-test-5"></input>
+
+<label>Common Dialogs</label><br>
+<button type="button" id="btnYesno">YES/NO</button>
+<button type="button" id="btnOkcancel">OK/Cancel</button>
+<button type="button" id="btnOk">OK only</button>
+<button type="button" id="btnCustom1">Custom1</button>
+<button type="button" id="btnCustom2" data-dlg="dlg-example6">Custom2</button>
+<br><br>
 `;
 
 export function getFriends() {
