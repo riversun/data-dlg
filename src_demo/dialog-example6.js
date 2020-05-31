@@ -65,12 +65,20 @@ export default async function createDialog(dialogMgr, opt) {
       if (action === 'delete') {
         const opt = {
           type: 'yesno',
-          title: { res: 'label-demo-yesno-title' },
-          message: { res: 'label-demo-yesno-message', model: { 'user-name': 'Tom' } },
+          title: { res: 'label-demo-confirm-delete-user-title' },
+          message: { res: 'label-demo-confirm-delete-user-message', model: { 'user-name': 'Tom' } },
         };
-        const yesNo = await dialogMgr.showConfirmation(opt);
-        if (yesNo === 'positive') {
-          await dialogMgr.showConfirmation({ type: 'ok', title: 'メッセージ', message: '削除しました' });
+        // 本当に削除していいかを確認
+        const confirmResult = await dialogMgr.showConfirmation(opt);
+        if (confirmResult === 'positive') {
+
+          // OKで確認するダイアログを表示
+          await dialogMgr.showConfirmation({
+            type: 'ok',
+            title: { res: 'label-demo-confirm-delete-user-title' },
+            message: { res: 'label-demo-finished-delete-user', model: { 'user-name': 'Tom' } }
+          });
+
         } else {
           dialogInstance.show();
         }

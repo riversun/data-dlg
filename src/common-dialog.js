@@ -22,8 +22,11 @@ export default class CommonConfirmationDialog {
   constructor(dialogMgr) {
     this.dialogMgr = dialogMgr;
 
-    this.numOfDialogPool = 1;
-    this.crrNum = 0;
+    // コモンダイアログのプール数
+    //(コモンダイアログからコモンダイアログを開く場合1だとうまく動作しないため)
+    this.numOfDialogPool = 2;
+    this.crrDialogNumber = 0;
+
     this.positiveListener = () => {
     };
     this.negativeListener = () => {
@@ -36,9 +39,9 @@ export default class CommonConfirmationDialog {
   }
 
   async showConfirmation(opt) {
-    this.crrNum += 1;
-    if (this.crrNum > this.numOfDialogPool - 1) {
-      this.crrNum = 0;
+    this.crrDialogNumber += 1;
+    if (this.crrDialogNumber > this.numOfDialogPool - 1) {
+      this.crrDialogNumber = 0;
     }
     this.opt = { type: 'yesno', res: {}, class: {} };
     mergeDeeply({ op: 'overwrite-merge', object1: this.opt, object2: opt });
@@ -67,7 +70,7 @@ export default class CommonConfirmationDialog {
       }
     }
     await this.init();
-    await this.dialogMgr.showDialog(`data-dlg-common-confirmation${this.crrNum}`, {
+    await this.dialogMgr.showDialog(`data-dlg-common-confirmation${this.crrDialogNumber}`, {
       params: {
         title: titleDisp, // this.opt.title || this.dialogMgr.t(this.opt.res.title),
         message: messageDisp, // this.opt.message || this.dialogMgr.t(this.opt.res.message),
@@ -258,11 +261,11 @@ export default class CommonConfirmationDialog {
 
 
   async init() {
-    if (this.dialogMgr.getDialogModelById(`data-dlg-common-confirmation${this.crrNum}`)) {
+    if (this.dialogMgr.getDialogModelById(`data-dlg-common-confirmation${this.crrDialogNumber}`)) {
       return 'success';
     }
     await this.dialogMgr.createDialog({
-      id: `data-dlg-common-confirmation${this.crrNum}`,
+      id: `data-dlg-common-confirmation${this.crrDialogNumber}`,
       template: COMMON_DIALOG_TEMPLATE,
       onCreate: this.onDialogCreate.bind(this),
       onApply: this.onDialogApply.bind(this),

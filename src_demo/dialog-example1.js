@@ -46,7 +46,7 @@ export default async function createDialog(dialogMgr, opt) {
       // model => context の場合はヘルパーメソッド bindModelToContext(modle,context, keys) が使える
       // context => model　の場合はヘルパーメソッド bindModelFromContext(model, context, keys)　が使える
       // userDataにある値をcontextに格納(そうすることで、userDataにある値がviewで表示できるようになる)
-      const copyToPropNames = ['userResidence', 'userName', 'userAge', 'userHobbies','userProtectionEnabled'];
+      const copyToPropNames = ['userResidence', 'userName', 'userAge', 'userHobbies', 'userProtectionEnabled'];
       dialogMgr.bindModelToContext(
         userData, dialogModel.context, copyToPropNames);
 
@@ -77,6 +77,8 @@ export default async function createDialog(dialogMgr, opt) {
           { res: (userAge < 18) ? 'err-user-age-under' : (60 < userAge) ? 'err-user-age-over' : null };
         // このダイアログを再表示して、エラーが表示された状態にする
 
+        // バリデーションの際の再描画のときは、オートフォーカスはあたらないようにする
+        dialogModel.focusProperty = 'none';
         dialogMgr.refreshDialog(dialogId);
         return;
       }
@@ -85,7 +87,7 @@ export default async function createDialog(dialogMgr, opt) {
       // model => context の場合はヘルパーメソッド bindModelToContext(modle,context, keys) が使える
       // context => model　の場合はヘルパーメソッド bindModelFromContext(model, context, keys)　が使える
       // userDataにある値をcontextに格納(そうすることで、userDataにある値がviewで表示できるようになる)
-      const copyToPropNames = ['userResidence', 'userName', 'userAge', 'userHobbies','userProtectionEnabled'];
+      const copyToPropNames = ['userResidence', 'userName', 'userAge', 'userHobbies', 'userProtectionEnabled'];
       dialogMgr.bindModelFromContext(
         userData, data.dialog.context, copyToPropNames);
 

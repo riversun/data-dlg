@@ -67,7 +67,10 @@
     "label-demo-ok-message": "This is OK only dialog message for #{user-name}.<br>Are you OK?",
     "label-demo-btn-positive": "positive",
     "label-demo-btn-negative": "negative",
-    "label-demo-btn-neutral": "neutral"
+    "label-demo-btn-neutral": "neutral",
+    "label-demo-confirm-delete-user-title": "User deletion",
+    "label-demo-confirm-delete-user-message": "Do you really want to delete user:#{user-name}?",
+    "label-demo-finished-delete-user": "User:#{user-name} deletion completed."
   },
   "ja": {
     "test": "テスト",
@@ -134,6 +137,9 @@
     "label-demo-okcancel-title": "OK・キャンセル ダイアログ",
     "label-demo-okcancel-message": "#{user-name}さん、これは「OK」「キャンセル」で回答するダイアログのメッセージです。<br>よろしいですか？",
     "label-demo-ok-title": "OKのみダイアログ",
-    "label-demo-ok-message": "#{user-name}さん、これは「OK」のみで回答するダイアログのメッセージです。<br>よろしいですか？"
+    "label-demo-ok-message": "#{user-name}さん、これは「OK」のみで回答するダイアログのメッセージです。<br>よろしいですか？",
+    "label-demo-confirm-delete-user-title": "ユーザーの削除",
+    "label-demo-confirm-delete-user-message": "ユーザー「#{user-name}」を本当に削除してよろしいですか？",
+    "label-demo-finished-delete-user": "ユーザー「#{user-name}」を削除しました"
   }
 }
