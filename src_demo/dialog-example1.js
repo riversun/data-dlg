@@ -90,14 +90,6 @@ export default async function createDialog(dialogMgr, opt) {
       const copyToPropNames = ['userResidence', 'userName', 'userAge', 'userHobbies', 'userProtectionEnabled'];
       dialogMgr.bindModelFromContext(
         userData, data.dialog.context, copyToPropNames);
-
-
-      // TODO 元のセルの内容を更新するサンプルと、onAnyのコールバックを受けるサンプルを作る
-      // TODO 自分で指定したチェックボックス表示用文字列を表示するサンプルを作る
-      //mgr.refreshDialog(dialogId, { focusProperty: focusProp });
-      //元のセルの内容を更新
-      //openerElement.innerHTML = getContentTableHTML(condition);
-
       // ダイアログを閉じる
       dialogInstance.hide();
 

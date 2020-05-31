@@ -96,6 +96,7 @@ export default class CommonConfirmationDialog {
       if (this.crrDialogNumber > this.numOfDialogPool - 1) {
         this.crrDialogNumber = 0;
       }
+
       this.setOnPositiveListener(() => {
         resolve('positive');
       });

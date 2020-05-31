@@ -56,9 +56,6 @@ export default async function createDialog(dialogMgr, opt) {
         userData, data.dialog.context, copyToPropNames);
 
 
-      // TODO 元のセルの内容を更新するサンプルと、onAnyのコールバックを受けるサンプルを作る
-      // TODO 自分で指定したチェックボックス表示用文字列を表示するサンプルを作る
-
       // ダイアログを閉じる
       dialogInstance.hide();
 

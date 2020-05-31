@@ -18,7 +18,7 @@ export const INNER_HTML = `<!-- -->
 <button type="button" id="btnOkcancel">OK/Cancel</button>
 <button type="button" id="btnOk">OK only</button>
 <button type="button" id="btnCustom1">Custom1</button>
-<button type="button" id="btnCustom2" data-dlg="dlg-example6">Custom2</button>
+<button type="button" id="btnCustom2" data-dlg="dlg-test-6">Custom2</button>
 <br><br>
 `;
 

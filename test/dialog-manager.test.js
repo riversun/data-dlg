@@ -5,6 +5,7 @@ import bsn from "../src_bsn_2.0.27/bootstrap-native-v4.js";//"bootstrap.native/d
 import { SERVER_ENDPOINT, INNER_HTML, loadResourceFromUrl, getFriends, getUserData } from "./test-common.js";
 
 function createDlgMgr() {
+
   const dialogMgr = new DialogManager();
   const locale = 'en';
   dialogMgr.setBsn(bsn);
@@ -16,11 +17,12 @@ function createDlgMgr() {
 
 describe('DialogManager', () => {
   describe('showConfirmation()', () => {
-
     // yesnoダイアログで YES をクリックすると positive が返ることを確認
     test('[yesno dialog] YES clicked', async (done) => {
       document.body.innerHTML = INNER_HTML;
       const dialogMgr = createDlgMgr();
+
+
       await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
       const opt = {
         type: 'yesno',
@@ -60,6 +62,8 @@ describe('DialogManager', () => {
         // 確認ダイアログ上のapplyボタンをクリックする
         btnConfPositive.click();
       }, 1000);
+
+
       const result = await dialogMgr.showConfirmation(opt);
       expect(result).toBe('positive');
       done();
@@ -317,7 +321,8 @@ describe('DialogManager', () => {
       expect(result).toBe('negative');
       done();
     });//test
-// 確認ダイアログをカスタムして、positive,negative,neutralの3種類表示。ボタンのスタイル変更、neutralクリック
+
+    // 確認ダイアログをカスタムして、positive,negative,neutralの3種類表示。ボタンのスタイル変更、neutralクリック
     test('[custom confirmation dialog] 3 buttons and click neutral', async (done) => {
       document.body.innerHTML = INNER_HTML;
       const dialogMgr = createDlgMgr();
@@ -356,6 +361,138 @@ describe('DialogManager', () => {
       const result = await dialogMgr.showConfirmation(opt);
       expect(result).toBe('neutral');
       done();
+    });//test
+
+    // ダイアログから、確認ダイアログを開いて、さらに確認ダイアログを開く
+    //(backdrop検査でひっかかることがあるので、 ライブラリ側を overlay=nullのときmodalOverlayも0にセットするよう変更)
+    test('[custom dialog] open dialog from dialog', async (done) => {
+      const userData = getUserData();
+      document.body.innerHTML = INNER_HTML;
+
+      const dialogMgr = createDlgMgr();
+      await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
+      await dialogMgr.createDialog({
+        id: 'dlg-test-6',
+        url: `${SERVER_ENDPOINT}/view/dlg-test-6-open-external-window.html`,
+        onCreate: (data) => {
+          const dialogModel = data.dialog;
+          dialogModel.context = {
+            'label-title': { model: { 'user-name': "Tom" } },
+          };
+          dialogMgr.bindModelToContext(userData, dialogModel.context);
+        },
+        onApply: (data) => {
+          const dialogModel = data.dialog;
+          const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+          dialogInstance.hide();
+        },
+        onCancel: (data) => {
+          // ダイアログがキャンセルされたときに、呼び出される
+          const dialogModel = data.dialog;
+          const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+          dialogInstance.hide();
+        },
+        onAny: async (data) => {
+          const dialogModel = data.dialog;
+          const opener = dialogModel.opener;
+          const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+          const openerElement = opener ? opener.element : null;
+          const action = data.action;
+
+          if (action === 'delete') {
+            const opt = {
+              type: 'yesno',
+              title: { res: 'label-demo-confirm-delete-user-title' },
+              message: { res: 'label-demo-confirm-delete-user-message', model: { 'user-name': 'Tom' } },
+            };
+            // 本当に削除していいかを確認
+            const confirmResult = await dialogMgr.showConfirmation(opt);
+            if (confirmResult === 'positive') {
+              // OKで確認するダイアログを表示
+              await dialogMgr.showConfirmation({
+                type: 'ok',
+                title: { res: 'label-demo-confirm-delete-user-title' },
+                message: { res: 'label-demo-finished-delete-user', model: { 'user-name': 'Tom' } }
+              });
+            } else {
+              dialogInstance.show();
+            }
+          }
+        },
+      });
+
+      const dialogModel = dialogMgr.getDialogModelById('dlg-test-6');
+      const dialogElement = dialogModel.element;
+      dialogElement.addEventListener('hidden.bs.modal', (e) => {
+      });
+
+      dialogElement.addEventListener('shown.bs.modal', (e) => {
+        // ビューが表示された
+
+
+        //これから表示される確認ダイアログのdialogIdを前もって取得しておく
+        const confirmationDialog1Id = dialogMgr.getNextConfirmationDialogId();
+
+        setTimeout(() => {
+          //ユーザー削除ボタンを押した後、確認ダイアログがでている状態（のはず）
+          const confirmDialog1 = dialogMgr.getDialogModelById(confirmationDialog1Id);
+          const confirmDialog1Ele = confirmDialog1.element;
+          const confirmDialog1HTML = confirmDialog1Ele.innerHTML;
+          //確認ダイアログに正しいメッセージが表示されていることを確認
+          expect(confirmDialog1HTML).toContain('Do you really want to delete user:Tom?');
+
+          //ダイアログを順番に開いていっても、バックドロップ(黒背景)が存在していることを確認
+          const modalDrop = document.querySelector('.modal-backdrop');
+          expect(modalDrop).toBeTruthy();
+
+          // さらに、次に開く確認ダイアログのdialogIdを取得しておく
+          const confirmationDialog2Id = dialogMgr.getNextConfirmationDialogId();
+
+          setTimeout(() => {
+            // 1秒後には、２つめの確認ダイアログ(okだけのダイアログ)が開いている（はず）
+            const confirmDialog2 = dialogMgr.getDialogModelById(confirmationDialog2Id);
+            const confirmDialog2Ele = confirmDialog2.element;
+            const confirmDialog2HTML = confirmDialog2Ele.innerHTML;
+            expect(confirmDialog2HTML).toContain('User:Tom deletion completed.');
+            confirmDialog2Ele.addEventListener("hidden.bs.modal", () => {
+              //２つめのダイアログが完全に非表示になった場合
+
+              // bsnはhidden.bs.modal時点だと、まだbackdropがのこっている仕様のようなので、
+              //そこから少しまったあと、backdropが消えていることも確認してテストを終える
+              setTimeout(() => {
+                // モーダルのbackdrop（黒背景）も消えている
+                const modalDrop = document.querySelector('.modal-backdrop');
+                expect(modalDrop).toBeFalsy();
+                //テスト終了
+                done();
+              }, 300);
+            });
+
+            const btnConfirmDialog2OK = confirmDialog2Ele.querySelector('[data-dlg-action="apply"]');
+            btnConfirmDialog2OK.click();
+
+          }, 300);
+
+          // 確認ダイアログ1のOKボタンを取得
+          const btnConfirmDialog1OK = confirmDialog1Ele.querySelector('[data-dlg-action="apply"]');
+          btnConfirmDialog1OK.click();
+
+        }, 300);
+        // ユーザー削除ボタンを押す（これでダイアログがでる)
+        const btnDeleteUser = dialogElement.querySelector('[data-dlg-action="delete"]');
+        btnDeleteUser.click();
+
+      });
+
+
+      dialogMgr.activate();// ダイアログ関連のイベント登録
+      BSN.initCallback();// Bootstrap4のDataAPIを有効化
+
+
+      const btnCustom2 = document.querySelector('#btnCustom2');
+      //最初のダイアログを起動
+      btnCustom2.click();
+
     });//test
 
   });// describe
@@ -1978,14 +2115,6 @@ describe('DialogManager', () => {
             const copyToPropNames = ['userResidence', 'userName', 'userAge', 'userHobbies'];
             dialogMgr.bindModelFromContext(
               userData, data.dialog.context, copyToPropNames);
-
-
-            // TODO 元のセルの内容を更新するサンプルと、onAnyのコールバックを受けるサンプルを作る
-            // TODO 自分で指定したチェックボックス表示用文字列を表示するサンプルを作る
-            //mgr.refreshDialog(dialogId, { focusProperty: focusProp });
-            //元のセルの内容を更新
-            //openerElement.innerHTML = getContentTableHTML(condition);
-
             // ダイアログを閉じる
             dialogInstance.hide();
           },
@@ -2003,12 +2132,8 @@ describe('DialogManager', () => {
             const resumeData = data.resume;
             const openerKey = resumeData.openerKey;
             const openedDialogModel = resumeData.dialogModel;
-
-            //console.log(resumeData.dialogModel.id + "からかえってきた" + openerKey + "のデータ" + openedDialogModel.context.friend);
           }
-
         });//createDialog
-        //dialogMgr.showDialog('dlg-test1');
 
         dialogMgr.activate();// ダイアログ関連のイベント登録
         BSN.initCallback();// Bootstrap4のDataAPIを有効化
