@@ -1,6 +1,6 @@
 import mergeDeeply from 'merge-deeply';
+import EventListenerHelper from 'event-listener-helper';
 import { typeOf } from './common-utils';
-import EventListenerHelper from "event-listener-helper";
 
 const COMMON_DIALOG_TEMPLATE = `<!-- -->
 <div class="modal-header">
@@ -23,7 +23,7 @@ export default class CommonConfirmationDialog {
     this.dialogMgr = dialogMgr;
 
     // コモンダイアログのプール数
-    //(コモンダイアログからコモンダイアログを開く場合1だとうまく動作しないため)
+    // (コモンダイアログからコモンダイアログを開く場合1だとうまく動作しないため)
     this.numOfDialogPool = 2;
     this.crrDialogNumber = 0;
 
@@ -55,7 +55,6 @@ export default class CommonConfirmationDialog {
   }
 
   async showConfirmation(opt) {
-
     this.opt = { type: 'yesno', res: {}, class: {} };
     mergeDeeply({ op: 'overwrite-merge', object1: this.opt, object2: opt });
 
@@ -91,7 +90,7 @@ export default class CommonConfirmationDialog {
     });
 
     return new Promise((resolve) => {
-      //次に表示するダイアログにむけて通し番号をアップデートする
+      // 次に表示するダイアログにむけて通し番号をアップデートする
       this.crrDialogNumber += 1;
       if (this.crrDialogNumber > this.numOfDialogPool - 1) {
         this.crrDialogNumber = 0;
