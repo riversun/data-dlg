@@ -1288,6 +1288,12 @@
         }
 
         if (self[backdrop]) {
+          // riversun added start
+          // 実際のDOMからは modal-backdropクラス（をもった要素）が消えているのに、
+          // overlay変数にはなぜかDIV要素の参照残ってしまっている現象があるため、
+          // DOMツリーからmodal-backdropクラス（をもった要素）が消えたことを確認するよう修正
+          overlay = queryElement('.' + modalBackdropString);
+          // riversun added end
           !modalOverlay && !overlay && createOverlay();
         }
 

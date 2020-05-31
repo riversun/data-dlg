@@ -481,18 +481,7 @@ Or if you have an external dialog set to a value, are you giving it a "data-dlg-
 
         // 「適用」などのアクションボタン等にクリックイベントを自動的にセットする
         this.setEventsToActionButtons(dialogModel);
-        if (dialogModel.forceRemoveOverlay) {
 
-          if (dialogInstance.forceRemoveOverlay) {// 本家のbsnにはこのメソッドは無い　のでチェック
-            // riversun改造bsnのforceRemoveOverlayをよびだし、
-            // showより前に、ゾンビ化したoverlay(backdropのdiv)を消去する
-            // あるダイアログから別のダイアログを開いた後、もう一度そのダイアログを開くと
-            // そのダイアログでbackdrop(背景の黒いやつ)が表示されなくなる問題に対応
-            dialogInstance.forceRemoveOverlay();
-          }
-          // 1度実行したら無効にする
-          dialogModel.forceRemoveOverlay = false;
-        }
         dialogInstance.show();
 
         if (dialogModel.callback.onShow) {

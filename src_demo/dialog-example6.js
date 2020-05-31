@@ -10,33 +10,6 @@ export default async function createDialog(dialogMgr, opt) {
     url: 'view/dlg-example6-open-external-window.html',
     onCreate: (data) => {
       const dialogModel = data.dialog;
-      // 【forceRemoveOverlayについて】
-      // 以下の症状に対応するためforceRemoveOverlayというメソッドをbsnに追加したソースを読み込むことにした(2020/5/30)
-      // どのバージョンのbsnを変更したか、や、ソース変更箇所は about.txtを参照。
-      // ＜再現手順＞
-      // STEP1.あるダイアログAを開く。
-      // STEP2.ダイアログAは開いた状態で別のダイアログBをshowして開く。（ダイアログAは自動で閉じる)
-      // STEP3.ダイアログBを開いた状態で、hideメソッドでダイアログBを閉じる。
-      // STEP4.ダイアログAを再び開くと、backdrop(黒背景)が表示されなくなる
-      // （ただし、STEP3でダイアログBを閉じないで、ダイアログAをshowメソッドで開けば症状は出ない)
-      //＜原因＞
-      //どうやら overlay というオブジェクトがbackdropの正体らしいが、
-      // ダイアログBを開くと、ダイアログAのoverlayが透明になった状態で
-      //残り続けてしまうらしい。overlayが残っていると、あらたなbackdropが生成されず、
-      //症状のようになる。
-      //＜ワークアラウンド＞
-      //showメソッドでダイアログを開くときに、既存のオーバーレイ(backdropのゾンビ)を強制的に削除する
-      //forceRemoveOverlayをつくった。dialogModel.forceRemoveOverlay=trueの場合は、
-      //refreshDialog内でbsn.Modal#showメソッドよりも前にbsn.Modal#forceRemoveOverlayメソッドを呼んで
-      //ゾンビ化したbackdropを削除するようにする。
-      //＜ポイント＞
-      // 外部ダイアログを開いて、それっきり元のダイアログに戻らないような片道切符な導線を設計した場合は
-      // このワークアラウンドを onCreateの中に入れておくとよい。onCreateはダイアログをcreateしたときだけ
-      // つまり、ダイアログがまだ表示されていないときに表示したときだけ
-      //　実行されるので、 dialogModel.forceRemoveOverlay=trueをそこに記述しておく。
-      // さらに、dialogModel.forceRemoveOverlay=trueは1回 forceRemoveOverlayが実行されると自動でfalseになるようにしてある
-
-      dialogModel.forceRemoveOverlay = true;// このダイアログは子ダイアログを片道切符で開くのでゾンビbackdropを消去できるようこのフラグをたてる
 
       dialogModel.context = {
         'label-title': { model: { 'user-name': "Tom" } },
