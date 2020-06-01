@@ -16,6 +16,48 @@ function createDlgMgr() {
 
 
 describe('DialogManager', () => {
+
+
+  describe('bindModelFromContext()', () => {
+    test('without keys', () => {
+      const dialogMgr = createDlgMgr();
+      const model = {
+        name: 'Riversun',
+        hobby: 'Programming',
+      }
+      const context = {
+        name: 'Tom',
+        pets: ['dog', 'cat']
+      }
+      // without keys
+      dialogMgr.bindModelFromContext(model, context);
+      expect(model.name).toBe('Tom');// copied
+      expect(model.hobby).toBe('Programming');// not copied
+      expect(model.pets).toBeUndefined();
+    });
+
+    test('with keys', () => {
+      const dialogMgr = createDlgMgr();
+      const model = {
+        name: 'Riversun',
+        hobby: 'Programming',
+      }
+      const context = {
+        name: 'Tom',
+        pets: ['dog', 'cat'],
+        address: 'Tokyo',
+      }
+      // without keys
+      dialogMgr.bindModelFromContext(model, context, ['pets']);
+      expect(model.name).toBe('Riversun');// copied
+      expect(model.hobby).toBe('Programming');// not copied
+      expect(model.pets).toEqual(['dog', 'cat']);
+      expect(model.address).toBeUndefined();
+
+
+    });
+  });
+
   describe('showConfirmation()', () => {
     // yesnoダイアログで YES をクリックすると positive が返ることを確認
     test('[yesno dialog] YES clicked', async (done) => {

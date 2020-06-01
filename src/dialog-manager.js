@@ -152,14 +152,25 @@ export default class DialogManager {
 
   /**
    * contextにあるプロパティのうちmodelにあるプロパティ名と同名のプロパティがあったらmodelに書き込む
+   * ただし、keysでプロパティ名が具体的に指定されている場合はmodelに存在しないプロパティ名でもcontextからmodelにコピーする
    * @param dialogId
    * @param model
-   * @param keys
+   * @param keys コピーしたいキー
    */
   bindModelFromContext(model, context, keys) {
-    for (const key of Object.keys(model)) {
-      if (!keys || keys.includes(key)) {
-        if (isTruthy(context[key]) || typeOf(context[key] === 'Boolean')) {
+    if (keys) {
+      // context->modelにコピーしたいキーが指定されている場合
+      for (const key of Object.keys(context)) {
+        if (keys.includes(key)) {
+          if (isTruthy(context[key]) || typeOf(context[key]) === 'Boolean') {
+            model[key] = context[key];
+          }
+        }
+      }
+    } else {
+      // context->modelにコピーしたいキーが指定されていない場合
+      for (const key of Object.keys(model)) {
+        if (isTruthy(context[key]) || typeOf(context[key]) === 'Boolean') {
           model[key] = context[key];
         }
       }
