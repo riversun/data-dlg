@@ -65,9 +65,9 @@ module.exports = (env, argv) => {
             {
               loader: 'babel-loader',
             },
-            {
-              loader: 'eslint-loader',
-            },
+            // {
+            //   loader: 'eslint-loader',
+            // },
           ],
         },
         //scss

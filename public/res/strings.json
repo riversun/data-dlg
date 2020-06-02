@@ -70,7 +70,11 @@
     "label-demo-btn-neutral": "neutral",
     "label-demo-confirm-delete-user-title": "User deletion",
     "label-demo-confirm-delete-user-message": "Do you really want to delete user:#{user-name}?",
-    "label-demo-finished-delete-user": "User:#{user-name} deletion completed."
+    "label-demo-finished-delete-user": "User:#{user-name} deletion completed.",
+    "dlg-ex7-ctrl-foc-title": "Focus Example Dialog",
+    "dlg-ex7-ctrl-foc-lb-first-name": "First Name",
+    "dlg-ex7-ctrl-foc-lb-last-name": "Last Name",
+    "dlg-ex7-ctrl-foc-lb-middle-name": "(Middle Name)"
   },
   "ja": {
     "test": "テスト",
@@ -140,6 +144,10 @@
     "label-demo-ok-message": "#{user-name}さん、これは「OK」のみで回答するダイアログのメッセージです。<br>よろしいですか？",
     "label-demo-confirm-delete-user-title": "ユーザーの削除",
     "label-demo-confirm-delete-user-message": "ユーザー「#{user-name}」を本当に削除してよろしいですか？",
-    "label-demo-finished-delete-user": "ユーザー「#{user-name}」を削除しました"
+    "label-demo-finished-delete-user": "ユーザー「#{user-name}」を削除しました",
+    "dlg-ex7-ctrl-foc-title": "フォーカスのサンプル",
+    "dlg-ex7-ctrl-foc-lb-first-name": "名（なまえ）",
+    "dlg-ex7-ctrl-foc-lb-last-name": "姓（みょうじ）",
+    "dlg-ex7-ctrl-foc-lb-middle-name": "(ミドルネーム)"
   }
 }

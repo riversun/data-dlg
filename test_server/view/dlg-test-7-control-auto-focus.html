@@ -1,0 +1,41 @@
+<div class="modal-header">
+    <h5 class="modal-title">#{dlg-ex7-ctrl-foc-title}</h5>
+    <button type="button" class="close" data-dismiss="modal">
+        <span>&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <form>
+        <span>ダイアログ内にある複数の要素にdlg-focus属性が設定されいた場合通常動作では一番最初のemptyな要素が自動フォーカスされる</span><br>
+        <small>If the "data-dlg-focus"(with novalue) attribute is set for multiple elements in a dialog, the first empty element will be automatically focused in normal operation.</small>
+        <!-- first-name -->
+        <div class="form-group">
+            <label class="col-form-label">#{dlg-ex7-ctrl-foc-lb-first-name}</label>
+            <div class="input-group">
+                <input type="text" data-dlg-input-type="text" data-dlg-prop="userFirstName"
+                       data-dlg-focus data-dlg-enter-to-apply class="form-control">
+            </div>
+        </div>
+        <!-- last-name -->
+        <div class="form-group">
+            <label class="col-form-label">#{dlg-ex7-ctrl-foc-lb-last-name}</label>
+            <div class="input-group">
+                <input type="text" data-dlg-input-type="text" data-dlg-prop="userLastName"
+                       data-dlg-focus data-dlg-enter-to-apply class="form-control">
+            </div>
+        </div>
+        <!-- middle-name -->
+        <div class="form-group">
+            <label class="col-form-label">#{dlg-ex7-ctrl-foc-lb-middle-name}</label>
+            <div class="input-group">
+                <input type="text" data-dlg-input-type="text" data-dlg-prop="userMiddleName"
+                       data-dlg-focus data-dlg-enter-to-apply class="form-control">
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" data-dlg-action="apply">#{common-ok}</button>
+    <button type="button" class="btn btn-secondary" data-dlg-action="cancel">#{common-cancel}</button>
+    </button>
+</div>

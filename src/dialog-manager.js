@@ -219,7 +219,8 @@ export default class DialogManager {
           keyboard: true, // true:close modal by pressing ESC
         });
 
-      const htmlTemplateFromUrl = !this.loadTemplateOnOpen ? await this.loadResourceFromUrl(url, 'text', `htmlTemplateFromUrl for dialog:${dialogId}`) : null;
+      const htmlTemplateFromUrl = !this.loadTemplateOnOpen ? await this.loadResourceFromUrl(url, 'text', `htmlTemplateFromUrl:${url} for dialog:${dialogId}`) : null;
+
 
       const dialogModel = {
         id: dialogId, // dialog id which is same as dialog DOM element
@@ -518,16 +519,45 @@ Or if you have an external dialog set to a value, are you giving it a "data-dlg-
         let focusEle = null;
 
         if (dialogModel.focusProperty) {
+
+          // 強制フォーカス設定があれば
           if (dialogModel.focusProperty === 'none') {
             // noneが指定されていたら、どこにもオートフォーカスはしない
             // ただし１回で効力は切れる
             dialogModel.focusProperty = null;
           } else {
             focusEle = dialogEle.querySelector(`[data-dlg-prop=${dialogModel.focusProperty}]`);
+            dialogModel.focusProperty = null;
           }
+
         } else {
+          // 強制フォーカスの設定なければ
           // 指定されたinput要素へのフォーカス処理
-          focusEle = dialogEle.querySelector('[data-dlg-focus]');
+          const focusEles = dialogEle.querySelectorAll('[data-dlg-focus]');
+
+          for (const ele of focusEles) {
+
+            let focusMode = ele.getAttribute('data-dlg-focus');
+
+            if (focusMode === '') {
+              // data-dlg-focus属性に属性値が設定されていない場合は
+              // focus-if-emptyと同じ扱いとする
+              focusMode = 'focus-if-empty';
+            }
+
+            if (focusMode === 'always') {
+              // 常にフォーカスするモード
+              focusEle = ele;
+              break;
+            } else if (focusMode === 'focus-if-empty') {
+              // 値がカラ（empty）だったらフォーカスする
+              if (ele.value === '') {
+                focusEle = ele;
+                break;
+              }
+            }
+          }
+
         }
         if (focusEle) {
           setTimeout(() => {

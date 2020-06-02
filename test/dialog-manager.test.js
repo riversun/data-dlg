@@ -538,7 +538,6 @@ describe('DialogManager', () => {
     });//test
 
   });// describe
-
   describe('setLocale()', () => {
     test('set "ja" ', async () => {
         const dialogMgr = createDlgMgr();
@@ -2151,4 +2150,329 @@ describe('DialogManager', () => {
       }
     );//test
   });// describe
+  describe('DATA-API auto-focus', () => {
+
+    // data-dlg-focus が指定されており、かつvalueが空なら、発見された最初の要素にフォーカスがいく
+    test('Auto focus on the first empty input element', async (done) => {
+        document.body.innerHTML = INNER_HTML;
+        const userNameData = {
+          userFirstName: null,
+          userLastName: '',
+          userMiddleName: null,
+        }
+        const dialogMgr = createDlgMgr();
+        await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
+
+        // Setup condition input dialog
+        await dialogMgr.createDialog({
+          id: 'dlg-test-7',
+          url: `${SERVER_ENDPOINT}/view/dlg-test-7-control-auto-focus.html`,
+          onCreate: (data) => {
+            const dialogModel = data.dialog;
+            const opener = dialogModel.opener;
+            dialogModel.context = {};
+            dialogMgr.bindModelToContext(
+              userNameData, dialogModel.context);
+          },
+          onApply: (data) => {
+            const dialogModel = data.dialog;
+            const opener = dialogModel.opener;
+            const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+            dialogMgr.bindModelFromContext(
+              userNameData, data.dialog.context);
+            dialogInstance.hide();
+          },
+          onCancel: (data) => {
+            const dialogModel = data.dialog;
+            const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+            dialogInstance.hide();
+          },
+
+        });//createDialog
+
+        dialogMgr.activate();// ダイアログ関連のイベント登録
+        BSN.initCallback();// Bootstrap4のDataAPIを有効化
+
+        const dialogModel = dialogMgr.getDialogModelById('dlg-test-7');
+        const dialogElement = dialogModel.element;
+        dialogElement.addEventListener('shown.bs.modal', (e) => {
+          // ダイアログが表示された
+          const userFirstNameEle = document.querySelector('[data-dlg-prop="userFirstName"]');
+          const userLastNameEle = document.querySelector('[data-dlg-prop="userLastName"]');
+          const userMiddleNameEle = document.querySelector('[data-dlg-prop="userMiddleName"]');
+          setTimeout(() => {
+            // document.activeElement is a focused element
+            expect(document.activeElement).toBe(userFirstNameEle);
+            expect(document.activeElement === userFirstNameEle).toBe(true);
+            done();
+          }, 600);
+        });
+
+        const button1 = document.querySelector('[data-dlg="dlg-test-7"]');
+        button1.click();
+
+
+      }
+    );//test
+
+    // data-dlg-focus が指定されており、かつvalueが指定されていない要素のうち先頭のもにフォーカスがいく
+    test('Auto focus on the first empty input element no2', async (done) => {
+
+        document.body.innerHTML = INNER_HTML;
+        const userNameData = {
+          userFirstName: 'Tom',
+          userLastName: '',
+          userMiddleName: null,
+        }
+        const dialogMgr = createDlgMgr();
+        await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
+
+        // Setup condition input dialog
+        await dialogMgr.createDialog({
+          id: 'dlg-test-7-1',
+          url: `${SERVER_ENDPOINT}/view/dlg-test-7-control-auto-focus.html`,
+          onCreate: (data) => {
+            const dialogModel = data.dialog;
+            const opener = dialogModel.opener;
+            dialogModel.context = {};
+            dialogMgr.bindModelToContext(
+              userNameData, dialogModel.context);
+          },
+          onApply: (data) => {
+            const dialogModel = data.dialog;
+            const opener = dialogModel.opener;
+            const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+            dialogMgr.bindModelFromContext(
+              userNameData, data.dialog.context);
+            dialogInstance.hide();
+          },
+          onCancel: (data) => {
+            const dialogModel = data.dialog;
+            const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+            dialogInstance.hide();
+          },
+
+        });//createDialog
+
+        dialogMgr.activate();// ダイアログ関連のイベント登録
+        BSN.initCallback();// Bootstrap4のDataAPIを有効化
+
+        const dialogModel = dialogMgr.getDialogModelById('dlg-test-7-1');
+        const dialogElement = dialogModel.element;
+        dialogElement.addEventListener('shown.bs.modal', (e) => {
+          // ダイアログが表示された
+          const userFirstNameEle = document.querySelector('[data-dlg-prop="userFirstName"]');
+          const userLastNameEle = document.querySelector('[data-dlg-prop="userLastName"]');
+          const userMiddleNameEle = document.querySelector('[data-dlg-prop="userMiddleName"]');
+          setTimeout(() => {
+            // data-dlg-focus が指定されており、かつvalueが指定されていない要素のうち先頭のもにフォーカスがいく
+            expect(document.activeElement).toBe(userLastNameEle);//
+            done();
+          }, 600);
+        });
+
+        const button1 = document.querySelector('[data-dlg="dlg-test-7-1"]');
+        button1.click();
+
+
+      }
+    );//test
+
+    // data-dlg-focus="always"が指定されている場合は、その要素のvalueが入力済でもそこにフォーカスがいく
+    test('Always auto focus on the first input', async (done) => {
+
+
+        document.body.innerHTML = INNER_HTML;
+        const userNameData = {
+          userFirstName: 'Tom',
+          userLastName: '',
+          userMiddleName: null,
+        }
+        const dialogMgr = createDlgMgr();
+        await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
+
+        // Setup condition input dialog
+        await dialogMgr.createDialog({
+          id: 'dlg-test-7-1',
+          url: `${SERVER_ENDPOINT}/view/dlg-test-7-1-control-auto-focus-always.html`,
+          onCreate: (data) => {
+            const dialogModel = data.dialog;
+            const opener = dialogModel.opener;
+            dialogModel.context = {};
+            dialogMgr.bindModelToContext(
+              userNameData, dialogModel.context);
+          },
+          onApply: (data) => {
+            const dialogModel = data.dialog;
+            const opener = dialogModel.opener;
+            const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+            dialogMgr.bindModelFromContext(
+              userNameData, data.dialog.context);
+            dialogInstance.hide();
+          },
+          onCancel: (data) => {
+            const dialogModel = data.dialog;
+            const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+            dialogInstance.hide();
+          },
+
+        });//createDialog
+
+        dialogMgr.activate();// ダイアログ関連のイベント登録
+        BSN.initCallback();// Bootstrap4のDataAPIを有効化
+
+        const dialogModel = dialogMgr.getDialogModelById('dlg-test-7-1');
+        const dialogElement = dialogModel.element;
+        dialogElement.addEventListener('shown.bs.modal', (e) => {
+          // ダイアログが表示された
+          const userFirstNameEle = document.querySelector('[data-dlg-prop="userFirstName"]');
+          const userLastNameEle = document.querySelector('[data-dlg-prop="userLastName"]');
+          const userMiddleNameEle = document.querySelector('[data-dlg-prop="userMiddleName"]');
+          setTimeout(() => {
+            // data-dlg-focus="always"が指定されている場合は、その要素のvalueが入力済でもそこにフォーカスがいく
+            expect(document.activeElement).toBe(userFirstNameEle);//
+            done();
+          }, 600);
+        });
+
+        const button1 = document.querySelector('[data-dlg="dlg-test-7-1"]');
+        button1.click();
+
+
+      }
+    );//test
+
+    //  dialogModel.focusPropertyはdata-dlg-focus属性より強い(フォーカスのキャンセル）
+    test('Force disable focus by focusProperty', async (done) => {
+        document.body.innerHTML = INNER_HTML;
+        const userNameData = {
+          userFirstName: null,
+          userLastName: '',
+          userMiddleName: null,
+        }
+        const dialogMgr = createDlgMgr();
+        await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
+
+        // Setup condition input dialog
+        await dialogMgr.createDialog({
+          id: 'dlg-test-7',
+          url: `${SERVER_ENDPOINT}/view/dlg-test-7-control-auto-focus.html`,
+          onCreate: (data) => {
+            const dialogModel = data.dialog;
+            const opener = dialogModel.opener;
+            dialogModel.context = {};
+            dialogMgr.bindModelToContext(
+              userNameData, dialogModel.context);
+            dialogModel.focusProperty = 'none';
+          },
+          onApply: (data) => {
+            const dialogModel = data.dialog;
+            const opener = dialogModel.opener;
+            const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+            dialogMgr.bindModelFromContext(
+              userNameData, data.dialog.context);
+            dialogInstance.hide();
+          },
+          onCancel: (data) => {
+            const dialogModel = data.dialog;
+            const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+            dialogInstance.hide();
+          },
+
+        });//createDialog
+
+        dialogMgr.activate();// ダイアログ関連のイベント登録
+        BSN.initCallback();// Bootstrap4のDataAPIを有効化
+
+        const dialogModel = dialogMgr.getDialogModelById('dlg-test-7');
+        const dialogElement = dialogModel.element;
+        dialogElement.addEventListener('shown.bs.modal', (e) => {
+          // ダイアログが表示された
+          const userFirstNameEle = document.querySelector('[data-dlg-prop="userFirstName"]');
+          const userLastNameEle = document.querySelector('[data-dlg-prop="userLastName"]');
+          const userMiddleNameEle = document.querySelector('[data-dlg-prop="userMiddleName"]');
+          setTimeout(() => {
+            // どこにもフォーカスがあたっていない
+            expect(document.activeElement === userFirstNameEle).toBe(false);
+            expect(document.activeElement === userLastNameEle).toBe(false);
+            expect(document.activeElement === userMiddleNameEle).toBe(false);
+            done();
+          }, 600);
+        });
+
+        const button1 = document.querySelector('[data-dlg="dlg-test-7"]');
+        button1.click();
+
+
+      }
+    );//test
+
+    //  dialogModel.focusPropertyはdata-dlg-focus属性より強い（指定要素に強制フォーカス)
+    test('Force set focus by focusProperty', async (done) => {
+        document.body.innerHTML = INNER_HTML;
+        const userNameData = {
+          userFirstName: null,
+          userLastName: '',
+          userMiddleName: null,
+        }
+        const dialogMgr = createDlgMgr();
+        await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
+
+        // Setup condition input dialog
+        await dialogMgr.createDialog({
+          id: 'dlg-test-7',
+          url: `${SERVER_ENDPOINT}/view/dlg-test-7-control-auto-focus.html`,
+          onCreate: (data) => {
+            const dialogModel = data.dialog;
+            const opener = dialogModel.opener;
+            dialogModel.context = {};
+            dialogMgr.bindModelToContext(
+              userNameData, dialogModel.context);
+            dialogModel.focusProperty = 'userMiddleName';
+          },
+          onApply: (data) => {
+            const dialogModel = data.dialog;
+            const opener = dialogModel.opener;
+            const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+            dialogMgr.bindModelFromContext(
+              userNameData, data.dialog.context);
+            dialogInstance.hide();
+          },
+          onCancel: (data) => {
+            const dialogModel = data.dialog;
+            const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+            dialogInstance.hide();
+          },
+
+        });//createDialog
+
+        dialogMgr.activate();// ダイアログ関連のイベント登録
+        BSN.initCallback();// Bootstrap4のDataAPIを有効化
+
+        const dialogModel = dialogMgr.getDialogModelById('dlg-test-7');
+        const dialogElement = dialogModel.element;
+        dialogElement.addEventListener('shown.bs.modal', (e) => {
+          // ダイアログが表示された
+          const userFirstNameEle = document.querySelector('[data-dlg-prop="userFirstName"]');
+          const userLastNameEle = document.querySelector('[data-dlg-prop="userLastName"]');
+          const userMiddleNameEle = document.querySelector('[data-dlg-prop="userMiddleName"]');
+          setTimeout(() => {
+            // どこにもフォーカスがあたっていない
+            expect(document.activeElement === userFirstNameEle).toBe(false);
+            expect(document.activeElement === userLastNameEle).toBe(false);
+            expect(document.activeElement === userMiddleNameEle).toBe(true);
+            expect(document.activeElement).toBe(userMiddleNameEle);
+            done();
+          }, 600);
+        });
+
+        const button1 = document.querySelector('[data-dlg="dlg-test-7"]');
+        button1.click();
+
+
+      }
+    );//test
+
+  });// describe
+
 });

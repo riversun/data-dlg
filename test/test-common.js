@@ -20,6 +20,11 @@ export const INNER_HTML = `<!-- -->
 <button type="button" id="btnCustom1">Custom1</button>
 <button type="button" id="btnCustom2" data-dlg="dlg-test-6">Custom2</button>
 <br><br>
+<label>自動フォーカス</label><br>
+<button type="button" data-dlg="dlg-test-7">自動フォーカスの動作１</button>
+<button type="button" data-dlg="dlg-test-7-1">自動フォーカスの動作２</button>
+<link rel="stylesheet" href="demo.css">
+<script src="demo.js"></script>
 `;
 
 export function getFriends() {
