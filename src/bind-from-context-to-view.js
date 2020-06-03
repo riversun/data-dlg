@@ -57,35 +57,52 @@ export function doShowContextToDialogInput(dialogModel, opt) {
   for (const dlgPropInputEle of dlgPropInputEles) {
     // 入力コントロールの入力値がひもづけられるプロパティ名
     const dlgInputPropName = getInputPropertyName(dlgPropInputEle);
-    const inputPropertyType = getInputPropertyType(dlgPropInputEle);
 
-    if (inputPropertyType === 'text' || inputPropertyType === 'number') {
+    if (dlgPropInputEle.tagName === 'DIV') {
+      // ラジオボタンの親要素だった場合
       const inputValue = context[dlgInputPropName];
-      dlgPropInputEle.value = getSingleDispOf(dlgPropInputEle, inputValue);
-    } else if (inputPropertyType === 'boolean') {
-      if (dlgPropInputEle.tagName.toLowerCase() === 'input' && dlgPropInputEle.type === 'checkbox') {
-        const inputValue = context[dlgInputPropName];
+      if (inputValue) {
+        const id = inputValue;
 
-        if (typeOf(inputValue) === 'Boolean') {
-          if (inputValue === true) {
-            dlgPropInputEle.checked = true;
-          } else if (inputValue === false) {
-            dlgPropInputEle.checked = false;
+        const dispResourcePropName = dlgPropInputEle.getAttribute('data-dlg-ref');
+        const checkBoxId = `radio-${dispResourcePropName}--${id}`;
+        const checkBox = dialogEle.querySelector(`#${checkBoxId}`);
+        checkBox.checked = true;
+      }
+
+    } else {
+      // ラジオボタンじゃない単一選択要素
+
+      const inputPropertyType = getInputPropertyType(dlgPropInputEle);
+
+      if (inputPropertyType === 'text' || inputPropertyType === 'number') {
+        const inputValue = context[dlgInputPropName];
+        dlgPropInputEle.value = getSingleDispOf(dlgPropInputEle, inputValue);
+      } else if (inputPropertyType === 'boolean') {
+        if (dlgPropInputEle.tagName.toLowerCase() === 'input' && dlgPropInputEle.type === 'checkbox') {
+          const inputValue = context[dlgInputPropName];
+
+          if (typeOf(inputValue) === 'Boolean') {
+            if (inputValue === true) {
+              dlgPropInputEle.checked = true;
+            } else if (inputValue === false) {
+              dlgPropInputEle.checked = false;
+            }
           }
         }
-      }
-    } else if (inputPropertyType === 'datetime' || inputPropertyType === 'date' || inputPropertyType === 'time') {
-      if (dlgPropInputEle.tagName.toLowerCase() === 'input'
-        || dlgPropInputEle.tagName.toLowerCase() === 'select'
-      ) {
-        if (dlgInputPropName) {
-          doPopulateContextToDatePicker(dialogModel, opt);
+      } else if (inputPropertyType === 'datetime' || inputPropertyType === 'date' || inputPropertyType === 'time') {
+        if (dlgPropInputEle.tagName.toLowerCase() === 'input'
+          || dlgPropInputEle.tagName.toLowerCase() === 'select'
+        ) {
+          if (dlgInputPropName) {
+            doPopulateContextToDatePicker(dialogModel, opt);
+          }
+        } else {
+          throw Error(`Not currently supported element "${dlgPropInputEle.tagName}" as dialog input element.`);
         }
       } else {
-        throw Error(`Not currently supported element "${dlgPropInputEle.tagName}" as dialog input element.`);
+        throw Error(`Unknown inputPropertyType:${inputPropertyType} for property ${dlgInputPropName}`);
       }
-    } else {
-      throw Error(`Unknown inputPropertyType:${inputPropertyType} for property ${dlgInputPropName}`);
     }
   }
 }

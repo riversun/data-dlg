@@ -74,7 +74,29 @@
     "dlg-ex7-ctrl-foc-title": "Focus Example Dialog",
     "dlg-ex7-ctrl-foc-lb-first-name": "First Name",
     "dlg-ex7-ctrl-foc-lb-last-name": "Last Name",
-    "dlg-ex7-ctrl-foc-lb-middle-name": "(Middle Name)"
+    "dlg-ex7-ctrl-foc-lb-middle-name": "(Middle Name)",
+    "degrees": [
+      {
+        "id": "deg_junior_high",
+        "name": "Junior High Scrhool"
+      },
+      {
+        "id": "deg_high",
+        "name": "High Scrhool"
+      },
+      {
+        "id": "deg_college",
+        "name": "College"
+      },
+      {
+        "id": "deg_univ_bachelor",
+        "name": "Bachelor"
+      },
+      {
+        "id": "deg_univ_master",
+        "name": "Master"
+      }
+    ]
   },
   "ja": {
     "test": "テスト",
@@ -148,6 +170,28 @@
     "dlg-ex7-ctrl-foc-title": "フォーカスのサンプル",
     "dlg-ex7-ctrl-foc-lb-first-name": "名（なまえ）",
     "dlg-ex7-ctrl-foc-lb-last-name": "姓（みょうじ）",
-    "dlg-ex7-ctrl-foc-lb-middle-name": "(ミドルネーム)"
+    "dlg-ex7-ctrl-foc-lb-middle-name": "(ミドルネーム)",
+    "degrees": [
+      {
+        "id": "deg_junior_high",
+        "name": "中卒"
+      },
+      {
+        "id": "deg_high",
+        "name": "高卒"
+      },
+      {
+        "id": "deg_college",
+        "name": "短卒"
+      },
+      {
+        "id": "deg_univ_bachelor",
+        "name": "学士"
+      },
+      {
+        "id": "deg_univ_master",
+        "name": "修士"
+      }
+    ]
   }
 }

@@ -54,6 +54,34 @@ export function getSingleValueOf(dlgPropInputEle) {
     if (dlgInputPropName) {
       return escapeHTML(propValue);
     }
+  } else if (dlgPropInputEle.tagName.toLowerCase() === 'div') {
+    // radio buttonの親要素の場合
+    const dispResourcePropName = getDataRefPropName(dlgPropInputEle);
+
+    // 選択値にするプロパティ名
+    const refIdPropName = getInputDataRefIdPropName(dlgPropInputEle);
+    // 選択肢の表示につかうプロパティ名
+    const refDispPropName = getInputDataRefDispPropName(dlgPropInputEle);
+
+    const radios = dlgPropInputEle.querySelectorAll(`[id^=radio-${dispResourcePropName}]`);
+    const checkedStatus = [];
+
+    for (const radio of radios) {
+      const chkBoxId = radio.id;
+      const rawId = chkBoxId.split(`radio-${dispResourcePropName}--`)[1];
+      let id = Number(rawId);
+      if (refIdPropName && refDispPropName) {
+        // オブジェクト型の場合
+        id = rawId;
+      }
+      if (radio.checked) {
+        // チェックされている項目のリソース配列でのインデックスを格納する
+        return id;
+
+      }
+    }
+    //どれも選択されていない場合
+    return;
   } else {
     throw Error(`Not currently supported element "${dlgPropInputEle.tagName}" as dialog input element.`);
   }

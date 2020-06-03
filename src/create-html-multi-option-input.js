@@ -29,21 +29,46 @@ export default function doHandleChoiceEles(dialogModel, opt) {
     selectEle.innerHTML = html;
   }
 
-  // DIV要素以下に複数選択可能なcheckbox群のキャプション情報として
+  // select要素以外でdata-dlg-ref属性が指定されている要素のハンドリングをする
+  // 具体的には、複数選択の場合には checkbox 単一選択の場合には radioを用いる
+  // checkboxやradioをホールドする親となるDIV要素以下に複数選択可能なcheckbox,radio群のキャプション情報として
   // data-dlg-ref属性で指定されたリソース名で取得する
   // handle <div class="form-group" data-dlg-ref="prefectures"> eles for generating checkboxes
   const checkboxesParentEles = getAllDataRefEles(dialogEle, { tag: '.form-group' });
-  for (const checkboxesParentEle of checkboxesParentEles) {
-    const dispResourcePropName = getDataRefPropName(checkboxesParentEle);
-    const dispData = getListingInputDispDataMap(dialogModel, checkboxesParentEle, { i18res });
-    let html = '';
-    for (const [id, dispText] of dispData.entries()) {
-      html += `<!-- -->
+
+  for (const listSelectionParentEle of checkboxesParentEles) {
+
+    const singleProp = listSelectionParentEle.getAttribute('data-dlg-prop');
+    const multiProp = listSelectionParentEle.getAttribute('data-dlg-multi-prop');
+
+    if (multiProp) {
+      // 複数選択なのでチェックボックスを生成
+      const dispResourcePropName = getDataRefPropName(listSelectionParentEle);
+      const dispData = getListingInputDispDataMap(dialogModel, listSelectionParentEle, { i18res });
+      let html = '';
+      for (const [id, dispText] of dispData.entries()) {
+        html += `<!-- -->
 <div class="custom-control custom-checkbox custom-pad">
     <input type="checkbox" class="custom-control-input" id="check-${dispResourcePropName}--${id}" >
     <label class="custom-control-label" for="check-${dispResourcePropName}--${id}">${dispText}</label>
 </div>`;
+      }
+      listSelectionParentEle.innerHTML = html;
     }
-    checkboxesParentEle.innerHTML = html;
+    if (singleProp) {
+      // 単一選択なのでラジオボタン生成
+      const dispResourcePropName = getDataRefPropName(listSelectionParentEle);
+      const dispData = getListingInputDispDataMap(dialogModel, listSelectionParentEle, { i18res });
+      let html = '';
+      for (const [id, dispText] of dispData.entries()) {
+        html += `<!-- -->
+<div class="form-check custom-radio-button">
+                <input class="form-check-input" type="radio" name="${dispResourcePropName}" id="radio-${dispResourcePropName}--${id}">
+                <label class="form-check-label" for="radio-${dispResourcePropName}--${id}">${dispText}</label>
+            </div>
+`;
+      }
+      listSelectionParentEle.innerHTML = html;
+    }
   }
 }

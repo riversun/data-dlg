@@ -9,6 +9,7 @@ import createDialog5 from "./dialog-example5.js";
 import createDialog6 from "./dialog-example6.js";
 import createDialog7 from "./dialog-example7.js";
 import createDialog7_1 from "./dialog-example7-1.js";
+import createDialog8 from "./dialog-example8.js";
 
 export default class AppMain {
   constructor() {
@@ -34,8 +35,8 @@ export default class AppMain {
       userFriends: ['person_03', 'person_06'],
       userBestPrefecture: 'pref_tokyo',
       userProtectionEnabled: true,
+      userDegree: 'deg_high',
     };
-
 
 
   }
@@ -134,7 +135,7 @@ We're sorry for the inconvenience, but please give us enough time to reload your
     await createDialog6(this.dialogMgr, { userData: this.userData });
     await createDialog7(this.dialogMgr);
     await createDialog7_1(this.dialogMgr);
-
+    await createDialog8(this.dialogMgr, { userData: this.userData });
     this.dialogMgr.activate();
   }
 
