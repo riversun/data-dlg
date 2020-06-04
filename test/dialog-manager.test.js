@@ -2061,6 +2061,94 @@ describe('DialogManager', () => {
         text3.click();
       }
     );//test
+
+
+    // dialo8でradio buttonが正しく動作することを確認する
+    test('[dialog8] test radio button', async (done) => {
+        const userData = getUserData();
+
+        document.body.innerHTML = INNER_HTML;
+        const dialogMgr = createDlgMgr();
+        await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
+        await dialogMgr.createDialog({
+          id: 'dlg-test-8',
+          url: `${SERVER_ENDPOINT}/view/dlg-test-8-radio-single.html`,
+          onCreate: (data) => {
+            const dialogModel = data.dialog;
+            const opener = dialogModel.opener;
+            dialogModel.context = {};
+            const copyToPropNames = ['userDegree'];
+            dialogMgr.bindModelToContext(
+              userData, dialogModel.context, copyToPropNames);
+          },
+          onApply: (data) => {
+            const dialogModel = data.dialog;
+            const opener = dialogModel.opener;
+            const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+            const openerElement = opener ? opener.element : null;// DATA-APIによってダイアログを開いた要素
+
+
+            const copyToPropNames = ['userDegree'];
+            dialogMgr.bindModelFromContext(
+              userData, data.dialog.context, copyToPropNames);
+
+            dialogInstance.hide();
+
+            //選択したデータで元のセルの内容を更新
+            if (openerElement) {
+              openerElement.value = '';
+              // 内部でよければgetListingInputDispDataMap メソッドつかってもOK
+              for (const prefObj of dialogMgr.t('degrees')) {
+                if (prefObj.id === userData.userDegree) {
+                  openerElement.value = prefObj.name;
+                }
+              }
+            }
+
+            expect(openerElement.value).toBe('College');
+            expect(userData.userDegree).toBe('deg_college');
+            done();
+          },
+          onCancel: (data) => {
+            const dialogModel = data.dialog;
+            const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+            dialogInstance.hide();
+
+
+          },
+          onResume: (data) => {
+          },
+          onAny: (data) => {
+
+          }
+        });
+        dialogMgr.activate();
+        BSN.initCallback();
+        const mainDialogModel = dialogMgr.getDialogModelById('dlg-test-8');
+        const mainDialogEle = mainDialogModel.element;
+
+        mainDialogEle.addEventListener('shown.bs.modal', (e) => {
+          setTimeout(() => {
+
+            // ダイアログ起動時はdeg_highがチェックされている
+            const degHightRadioEle = mainDialogEle.querySelector('#radio-degrees--deg_high');
+            expect(degHightRadioEle.checked).toBe(true);
+
+            // ダイアログ上でdeg_collegeのラジオボタンをチェックする
+            const degCollegeRadioEle = mainDialogEle.querySelector('#radio-degrees--deg_college');
+            degCollegeRadioEle.checked = true;
+
+            const btnOK = mainDialogEle.querySelector('[data-dlg-action="apply"]');
+            btnOK.click();
+          }, 500);
+
+
+        });
+        //index.htmlのダイアログ起動ボタン
+        const text3 = document.querySelector('#text8');
+        text3.click();
+      }
+    );//test
   });// describe
   describe('deleteDialog()', () => {
     test('[dialog1]delete dialog', async () => {

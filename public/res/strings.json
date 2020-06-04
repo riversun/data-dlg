@@ -75,6 +75,8 @@
     "dlg-ex7-ctrl-foc-lb-first-name": "First Name",
     "dlg-ex7-ctrl-foc-lb-last-name": "Last Name",
     "dlg-ex7-ctrl-foc-lb-middle-name": "(Middle Name)",
+    "dlg-ex8-ctrl-rad-sin-degree-title": "Select Degree",
+    "dlg-ex8-ctrl-rad-sin-degree-lb-degree": "Select your degree",
     "degrees": [
       {
         "id": "deg_junior_high",
@@ -171,6 +173,8 @@
     "dlg-ex7-ctrl-foc-lb-first-name": "名（なまえ）",
     "dlg-ex7-ctrl-foc-lb-last-name": "姓（みょうじ）",
     "dlg-ex7-ctrl-foc-lb-middle-name": "(ミドルネーム)",
+    "dlg-ex8-ctrl-rad-sin-degree-title": "学歴選択",
+    "dlg-ex8-ctrl-rad-sin-degree-lb-degree": "最終学歴を選択してください",
     "degrees": [
       {
         "id": "deg_junior_high",

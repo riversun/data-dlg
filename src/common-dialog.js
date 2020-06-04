@@ -242,25 +242,25 @@ export default class CommonConfirmationDialog {
     }
   }
 
-  /**
-   * 外部から登録されたnegativeListenerを呼び出す
-   * @returns {Promise<void>}
-   */
-  async onNegative() {
-    if (this.negativeListener) {
-      await this.negativeListener();
-    }
-  }
-
-  /**
-   * 外部から登録されたneutralListenerを呼び出す
-   * @returns {Promise<void>}
-   */
-  async onNeutral() {
-    if (this.neutralListener) {
-      await this.neutralListener();
-    }
-  }
+  // /**
+  //  * 外部から登録されたnegativeListenerを呼び出す
+  //  * @returns {Promise<void>}
+  //  */
+  // async onNegative() {
+  //   if (this.negativeListener) {
+  //     await this.negativeListener();
+  //   }
+  // }
+  //
+  // /**
+  //  * 外部から登録されたneutralListenerを呼び出す
+  //  * @returns {Promise<void>}
+  //  */
+  // async onNeutral() {
+  //   if (this.neutralListener) {
+  //     await this.neutralListener();
+  //   }
+  // }
 
   async init() {
     if (this.dialogMgr.getDialogModelById(this.getDialogId())) {
