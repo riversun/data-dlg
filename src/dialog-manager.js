@@ -3,7 +3,10 @@ import EventListenerHelper from 'event-listener-helper';
 import mergeDeeply from 'merge-deeply';
 import { AjaxClient } from 'ajax-client';
 import I18nice from 'i18nice';
-import { isTruthy, isFalsy, typeOf } from './common-utils';
+import {
+  isNotUndefined,
+  isTruthy, isFalsy, typeOf,
+} from './common-utils';
 import DlgmgrTemplateFiller from './dlgmgr-template-filler';
 import { doCopyDialogInputToContext } from './bind-from-view-to-context';
 import { doShowContextToDialogInput, doShowMultiPropContextToDialogInput } from './bind-from-context-to-view';
@@ -153,6 +156,7 @@ export default class DialogManager {
   /**
    * contextにあるプロパティのうちmodelにあるプロパティ名と同名のプロパティがあったらmodelに書き込む
    * ただし、keysでプロパティ名が具体的に指定されている場合はmodelに存在しないプロパティ名でもcontextからmodelにコピーする
+   * contextにあるプロパティの値がnullだった場合は、modelにコピーされる。undefinedだった場合はコピーされない。
    * @param dialogId
    * @param model
    * @param keys コピーしたいキー
@@ -162,7 +166,8 @@ export default class DialogManager {
       // context->modelにコピーしたいキーが指定されている場合
       for (const key of Object.keys(context)) {
         if (keys.includes(key)) {
-          if (isTruthy(context[key]) || typeOf(context[key]) === 'Boolean') {
+          // if (isTruthy(context[key]) || typeOf(context[key]) === 'Boolean') {
+          if (isNotUndefined(context[key]) || typeOf(context[key]) === 'Boolean') {
             model[key] = context[key];
           }
         }
@@ -170,7 +175,8 @@ export default class DialogManager {
     } else {
       // context->modelにコピーしたいキーが指定されていない場合
       for (const key of Object.keys(model)) {
-        if (isTruthy(context[key]) || typeOf(context[key]) === 'Boolean') {
+        // if (isTruthy(context[key]) || typeOf(context[key]) === 'Boolean') {
+        if (isNotUndefined(context[key]) || typeOf(context[key]) === 'Boolean') {
           model[key] = context[key];
         }
       }
@@ -519,7 +525,6 @@ Or if you have an external dialog set to a value, are you giving it a "data-dlg-
         let focusEle = null;
 
         if (dialogModel.focusProperty) {
-
           // 強制フォーカス設定があれば
           if (dialogModel.focusProperty === 'none') {
             // noneが指定されていたら、どこにもオートフォーカスはしない
@@ -529,14 +534,12 @@ Or if you have an external dialog set to a value, are you giving it a "data-dlg-
             focusEle = dialogEle.querySelector(`[data-dlg-prop=${dialogModel.focusProperty}]`);
             dialogModel.focusProperty = null;
           }
-
         } else {
           // 強制フォーカスの設定なければ
           // 指定されたinput要素へのフォーカス処理
           const focusEles = dialogEle.querySelectorAll('[data-dlg-focus]');
 
           for (const ele of focusEles) {
-
             let focusMode = ele.getAttribute('data-dlg-focus');
 
             if (focusMode === '') {
@@ -557,7 +560,6 @@ Or if you have an external dialog set to a value, are you giving it a "data-dlg-
               }
             }
           }
-
         }
         if (focusEle) {
           setTimeout(() => {

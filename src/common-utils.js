@@ -32,6 +32,15 @@ export function isFalsy(obj) {
   return res;
 }
 
+export function isUndefined(obj) {
+  const res = (typeof obj === 'undefined');
+  return res;
+}
+
+export function isNotUndefined(obj) {
+  return !isUndefined(obj);
+}
+
 export function isTruthy(obj) {
   return !isFalsy(obj);
 }

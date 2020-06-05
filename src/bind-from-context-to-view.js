@@ -69,7 +69,6 @@ export function doShowContextToDialogInput(dialogModel, opt) {
         const checkBox = dialogEle.querySelector(`#${checkBoxId}`);
         checkBox.checked = true;
       }
-
     } else {
       // ラジオボタンじゃない単一選択要素
 

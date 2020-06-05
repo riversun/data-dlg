@@ -64,8 +64,6 @@ export function getSingleValueOf(dlgPropInputEle) {
     const refDispPropName = getInputDataRefDispPropName(dlgPropInputEle);
 
     const radios = dlgPropInputEle.querySelectorAll(`[id^=radio-${dispResourcePropName}]`);
-    const checkedStatus = [];
-
     for (const radio of radios) {
       const chkBoxId = radio.id;
       const rawId = chkBoxId.split(`radio-${dispResourcePropName}--`)[1];
@@ -77,11 +75,9 @@ export function getSingleValueOf(dlgPropInputEle) {
       if (radio.checked) {
         // チェックされている項目のリソース配列でのインデックスを格納する
         return id;
-
       }
     }
-    //どれも選択されていない場合
-    return;
+    // どれも選択されていない場合
   } else {
     throw Error(`Not currently supported element "${dlgPropInputEle.tagName}" as dialog input element.`);
   }

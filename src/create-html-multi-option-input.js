@@ -37,7 +37,6 @@ export default function doHandleChoiceEles(dialogModel, opt) {
   const checkboxesParentEles = getAllDataRefEles(dialogEle, { tag: '.form-group' });
 
   for (const listSelectionParentEle of checkboxesParentEles) {
-
     const singleProp = listSelectionParentEle.getAttribute('data-dlg-prop');
     const multiProp = listSelectionParentEle.getAttribute('data-dlg-multi-prop');
 
