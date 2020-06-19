@@ -10,6 +10,8 @@ import createDialog6 from "./dialog-example6.js";
 import createDialog7 from "./dialog-example7.js";
 import createDialog7_1 from "./dialog-example7-1.js";
 import createDialog8 from "./dialog-example8.js";
+import createDialog9 from "./dialog-example9.js";
+import createDialog9_1 from "./dialog-example9-1.js";
 
 export default class AppMain {
   constructor() {
@@ -136,6 +138,8 @@ We're sorry for the inconvenience, but please give us enough time to reload your
     await createDialog7(this.dialogMgr);
     await createDialog7_1(this.dialogMgr);
     await createDialog8(this.dialogMgr, { userData: this.userData });
+    await createDialog9(this.dialogMgr,{ friends: this.friends});
+    await createDialog9_1(this.dialogMgr,{ friends: this.friends});
     this.dialogMgr.activate();
   }
 

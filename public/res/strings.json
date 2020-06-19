@@ -98,7 +98,10 @@
         "id": "deg_univ_master",
         "name": "Master"
       }
-    ]
+    ],
+    "dlg-ex9-sho-ext-dlg-lb-title": "User Selection",
+    "dlg-ex9-sho-ext-dlg-lb-edit-user": "Select users to edit"
+
   },
   "ja": {
     "test": "テスト",
@@ -196,6 +199,8 @@
         "id": "deg_univ_master",
         "name": "修士"
       }
-    ]
+    ],
+    "dlg-ex9-sho-ext-dlg-lb-title": "ユーザー選択",
+    "dlg-ex9-sho-ext-dlg-lb-edit-user": "編集するユーザーを選択してください"
   }
 }
