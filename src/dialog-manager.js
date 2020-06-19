@@ -12,7 +12,7 @@ import { doCopyDialogInputToContext } from './bind-from-view-to-context';
 import { doShowContextToDialogInput, doShowMultiPropContextToDialogInput } from './bind-from-context-to-view';
 import doHandleChoiceEles from './create-html-multi-option-input';
 import CommonConfirmationDialog from './common-dialog';
-
+import Notificator from './notificator';
 
 /**
  * bsn(bootstrap.native)+bootstrap4環境において、
@@ -38,6 +38,7 @@ import CommonConfirmationDialog from './common-dialog';
 export default class DialogManager {
   constructor() {
     this.dialogModels = new Map();
+    this.dialogNotificators = new Map();
     this.evh = new EventListenerHelper();
     this.templateFill = new DlgmgrTemplateFiller();
     this.loadTemplateOnOpen = false;
@@ -193,7 +194,7 @@ export default class DialogManager {
     const dialogId = opt.id;
     const { template } = opt;
     const { url } = opt;
-
+    const { returnable } = opt;
     const callbackStore = {
       onCreate: opt.onCreate,
       onShow: opt.onShow,
@@ -240,7 +241,13 @@ export default class DialogManager {
         opener: null, // data of this dialog opener
         params: {}, // extra parameters for dialog handling
       };
+
       this.dialogModels.set(dialogId, dialogModel);
+
+      if (returnable) {
+        const notificator = new Notificator();
+        this.dialogNotificators.set(dialogId, notificator);
+      }
     } else {
       // console.log(`Dialog element you specified by id:"${dialogId}" has already been existed.`);
 
@@ -310,6 +317,10 @@ export default class DialogManager {
     return this.dialogModels.get(dialogId);
   }
 
+  getNotificatorById(dialogId) {
+    return this.dialogNotificators.get(dialogId);
+  }
+
 
   /**
    * onCancelを呼び出す
@@ -345,6 +356,8 @@ export default class DialogManager {
     const dialogEle = dialogModel.element;
     const dialogId = dialogModel.id;
     const callbacks = dialogModel.callback;
+    const dialogNotificator = this.getNotificatorById(dialogId);
+
     // 「save」ボタン等のイベントをセットする
     const dlgActionEles = dialogEle.querySelectorAll('[data-dlg-action]');
     if (dlgActionEles) {
@@ -358,16 +371,25 @@ export default class DialogManager {
             doCopyDialogInputToContext(dialogModel);
             if (callbacks.onApply) {
               // コールバック
-              await callbacks.onApply({ action: 'apply', dialog: dialogModel });
+              const result = await callbacks.onApply({ action: 'apply', dialog: dialogModel });
+              if (dialogNotificator) {
+                dialogNotificator.notify({ action: 'apply', result });
+              }
             }
           }, { listenerName: `click-listener-for-apply-dlg-${dialogId}` });
         } else if (actionName === 'cancel') {
           this.evh.addEventListener(dlgActionEle, 'click', async () => {
-            await this.doCallbackCancel(actionName, dialogModel);
+            const result = await this.doCallbackCancel(actionName, dialogModel);
+            if (dialogNotificator) {
+              dialogNotificator.notify({ action: 'cancel', result });
+            }
           }, { listenerName: `click-listener-for-cancel-dlg-${dialogId}` });
         } else if (actionName) {
           this.evh.addEventListener(dlgActionEle, 'click', async () => {
-            await this.doCallbackAny(actionName, dialogModel);
+            const result = await this.doCallbackAny(actionName, dialogModel);
+            if (dialogNotificator) {
+              dialogNotificator.notify({ action: actionName, result });
+            }
           }, { listenerName: `click-listener-for-${actionName}-dlg-${dialogId}` });
         }
       }
@@ -381,7 +403,10 @@ export default class DialogManager {
           doCopyDialogInputToContext(dialogModel);
           if (callbacks.onApply) {
             // コールバック
-            await callbacks.onApply({ action: 'apply', dialog: dialogModel });
+            const result = await callbacks.onApply({ action: 'apply', dialog: dialogModel });
+            if (dialogNotificator) {
+              dialogNotificator.notify({ action: 'apply', result });
+            }
           }
         }
       });
@@ -419,6 +444,7 @@ export default class DialogManager {
     // openerではなく手動でダイアログを表示する
     const safeOpt = opt || {};
     const dialogModel = this.getDialogModelById(dialogId);
+    const dialogNotificator = this.getNotificatorById(dialogId);
     if (dialogModel) {
       mergeDeeply({ op: 'overwrite-merge', object1: dialogModel, object2: safeOpt });
 
@@ -430,6 +456,15 @@ export default class DialogManager {
       await this.openDialogInternally(dialogModel);
       this.refreshDialog(dialogId);
     }
+    return new Promise((resolve) => {
+      if (dialogNotificator) {
+        dialogNotificator.setListener((result) => {
+          resolve(result);
+        });
+      } else {
+        resolve();
+      }
+    });
   }
 
   async openDialogInternally(dialogModel) {

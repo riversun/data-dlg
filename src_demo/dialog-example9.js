@@ -10,8 +10,8 @@ export default async function createDialog(dialogMgr, opt) {
       const dialogModel = data.dialog;
       const opener = dialogModel.opener;
       dialogModel.context = {
-        persons:friends,
-        personId: 'person01',
+        persons: friends,
+        personId: 'person_01',
       };
 
     },
@@ -31,14 +31,9 @@ export default async function createDialog(dialogMgr, opt) {
         });
       }
     },
-    onApply: (data) => {
-      // onApplyコールバックは、ダイアログ上でユーザーがapplyアクションをおこした場合
-      // に呼び出される。
-      // 入力値のバリデーションも、このコールバック関数内で行い、問題があれば
-      // 再入力を促すメッセージを表示するなど処理する。
+    onApply: async (data) => {
 
       const dialogModel = data.dialog;
-      //const mgr = dialogModel.dialogManager;
       const dialogId = dialogModel.id;
       const opener = dialogModel.opener;
       const context = dialogModel.context;
@@ -46,8 +41,16 @@ export default async function createDialog(dialogMgr, opt) {
       const openerElement = opener.element;// DATA-APIによってダイアログを開いた要素
       const dialogParams = dialogModel.params;//extraなパラメータ格納用オブジェクト
 
+      const dlgResult = await dialogMgr.showDialog('dlg-example9-1', { params: { personId: context.personId } });
+      if (dlgResult.action === 'apply') {
+        dialogInstance.hide();
+        const selectedUserResidence = dlgResult.result.userResidence;
+        // 適用されたのでダイアログを閉じた状態のままおわり
+      } else {
+        // 適用されなかったので、ふたたびこのダイアログを開いてユーザー入力を促す
+        dialogInstance.show();
+      }
 
-      dialogInstance.hide();
     },
     onCancel: (data) => {
       // ダイアログがキャンセルされたときに、呼び出される
@@ -64,7 +67,7 @@ export default async function createDialog(dialogMgr, opt) {
       const openerKey = resumeData.openerKey;
       const openedDialogModel = resumeData.dialogModel;
 
-      //console.log(resumeData.dialogModel.id + "からかえってきた" + openerKey + "のデータ" + openedDialogModel.context.friend);
+
     }
 
   });
