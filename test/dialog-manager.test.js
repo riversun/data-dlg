@@ -2237,6 +2237,273 @@ describe('DialogManager', () => {
 
       }
     );//test
+
+    // showDialogで開いた先のダイアログ(returnable:true)の結果を取得する(applyの結果を取得)
+    test('[dialog9]show external dialog from dialog and get "apply"', async (done) => {
+        const friends = getFriends();
+        document.body.innerHTML = INNER_HTML;
+        const dialogMgr = createDlgMgr();
+        await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
+        await dialogMgr.createDialog({
+          id: 'dlg-test-9',
+          url: `${SERVER_ENDPOINT}/view/dlg-test-9-show-external-dialog.html`,
+          onCreate: (data) => {
+            const dialogModel = data.dialog;
+            const opener = dialogModel.opener;
+            dialogModel.context = {
+              persons: friends,
+              personId: 'person_01',
+            };
+          },
+          onShow: (data) => {
+            const dialogModel = data.dialog;
+            const ele = dialogModel.element;
+            const context = data.dialog.context;
+            const radios = ele.querySelectorAll(`[id^=radio-persons]`);
+            for (const radio of radios) {
+              radio.addEventListener('change', async (e) => {
+                const target = e.target;
+                const id = target.id.split('--')[1];
+                context['personId'] = id;
+              });
+            }
+          },
+          onApply: async (data) => {
+            const dialogModel = data.dialog;
+            const dialogId = dialogModel.id;
+            const opener = dialogModel.opener;
+            const context = dialogModel.context;
+            const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+            // showDialogで開いたダイアログの結果を取得する
+            const dlgResult = await dialogMgr.showDialog('dlg-test-9-1', { params: { personId: context.personId } });
+
+            expect(dlgResult.action).toBe('apply');
+
+            if (dlgResult.action === 'apply') {
+              // 適用がクリックされた場合
+              dialogInstance.hide();
+              const selectedUserResidence = dlgResult.result.userResidence;
+              expect(selectedUserResidence).toBe(2);
+              done();
+            } else {
+              // 適用されなかったので、ふたたびこのダイアログを開いてユーザー入力を促す
+              dialogInstance.show();
+            }
+          },
+          onCancel: (data) => {
+            const dialogModel = data.dialog;
+            const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+            dialogInstance.hide();
+          },
+        });
+        await dialogMgr.createDialog({
+          id: 'dlg-test-9-1',
+          url: `${SERVER_ENDPOINT}/view/dlg-test-9-1-general-inputs.html`,
+          returnable: true,//returnable:trueにすると、呼び出し側のshowDialogに返値を渡せる
+          onCreate: (data) => {
+            const dialogModel = data.dialog;
+            const dialogId = dialogModel.id;
+            const opener = dialogModel.opener;
+            const openerElement = opener ? opener.element : null;// DATA-APIによってダイアログを開いた要素
+            const dialogParams = dialogModel.params;//extraなパラメータ格納用オブジェクト
+
+            const selectedPerson = friends.find(data => data.id == dialogParams.personId);
+
+            // context内の同名のプロパティが初期値としてあてがわれる
+
+            dialogModel.context = {
+              // modelには、i18リソースを使うときのプレースホルダ変数を格納できる。リソース名は'label-title'
+              'label-title': { model: { 'user-name': selectedPerson.name } },
+              'userResidence': 2,
+            };
+          },
+
+          onApply: (data) => {
+            const dialogModel = data.dialog;
+            //const mgr = dialogModel.dialogManager;
+            const dialogId = dialogModel.id;
+            const opener = dialogModel.opener;
+            const context = dialogModel.context;
+            const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+            dialogInstance.hide();
+            // 明示的にreturnすると、その値を返すことができる
+            return { userResidence: context['userResidence'] };
+
+          },
+          onCancel: (data) => {
+            // ダイアログがキャンセルされたときに、呼び出される
+            const dialogModel = data.dialog;
+            //const mgr = dialogModel.dialogManager;
+            const dialogId = dialogModel.id;
+            const opener = dialogModel.opener;
+            const context = dialogModel.context;//ダイアログの入力状態
+            const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+            dialogInstance.hide();
+          },
+          onResume: (data) => {
+            const resumeData = data.resume;
+            const openerKey = resumeData.openerKey;
+            const openedDialogModel = resumeData.dialogModel;
+
+            //console.log(resumeData.dialogModel.id + "からかえってきた" + openerKey + "のデータ" + openedDialogModel.context.friend);
+          }
+
+        });
+        dialogMgr.activate();// ダイアログ関連のイベント登録
+        BSN.initCallback();// Bootstrap4のDataAPIを有効化
+
+        dialogMgr.showDialog('dlg-test-9');
+
+        const mainDialogModel = dialogMgr.getDialogModelById('dlg-test-9');
+        const mainDialogEle = mainDialogModel.element;
+
+        const subDialogModel = dialogMgr.getDialogModelById('dlg-test-9-1');
+        const subDialogEle = subDialogModel.element;
+
+        subDialogEle.addEventListener('shown.bs.modal', (e) => {
+
+          const btnOK = subDialogEle.querySelector('[data-dlg-action="apply"]');
+          btnOK.click();
+        });
+
+        mainDialogEle.addEventListener('shown.bs.modal', (e) => {
+          setTimeout(() => {
+            const btnOK = mainDialogEle.querySelector('[data-dlg-action="apply"]');
+            btnOK.click();
+          }, 500);
+        });
+      }
+    );//test
+
+    // showDialogで開いた先のダイアログ(returnable:true)の結果を取得する(cancelを取得)
+    test('[dialog9]show external dialog from dialog and get "cancel"', async (done) => {
+        const friends = getFriends();
+        document.body.innerHTML = INNER_HTML;
+        const dialogMgr = createDlgMgr();
+        await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
+        await dialogMgr.createDialog({
+          id: 'dlg-test-9',
+          url: `${SERVER_ENDPOINT}/view/dlg-test-9-show-external-dialog.html`,
+          onCreate: (data) => {
+            const dialogModel = data.dialog;
+            const opener = dialogModel.opener;
+            dialogModel.context = {
+              persons: friends,
+              personId: 'person_01',
+            };
+          },
+          onShow: (data) => {
+            const dialogModel = data.dialog;
+            const ele = dialogModel.element;
+            const context = data.dialog.context;
+            const radios = ele.querySelectorAll(`[id^=radio-persons]`);
+            for (const radio of radios) {
+              radio.addEventListener('change', async (e) => {
+                const target = e.target;
+                const id = target.id.split('--')[1];
+                context['personId'] = id;
+              });
+            }
+          },
+          onApply: async (data) => {
+            const dialogModel = data.dialog;
+            const dialogId = dialogModel.id;
+            const opener = dialogModel.opener;
+            const context = dialogModel.context;
+            const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+            // showDialogで開いたダイアログの結果を取得する
+            const dlgResult = await dialogMgr.showDialog('dlg-test-9-1', { params: { personId: context.personId } });
+
+            expect(dlgResult.action).toBe('cancel');
+
+            if (dlgResult.action === 'apply') {
+              // 適用がクリックされた場合
+              dialogInstance.hide();
+
+
+            } else {
+              // 適用されなかったので、ふたたびこのダイアログを開いてユーザー入力を促す
+              dialogInstance.show();
+              done();
+            }
+          },
+          onCancel: (data) => {
+            const dialogModel = data.dialog;
+            const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+            dialogInstance.hide();
+          },
+        });
+        await dialogMgr.createDialog({
+          id: 'dlg-test-9-1',
+          url: `${SERVER_ENDPOINT}/view/dlg-test-9-1-general-inputs.html`,
+          returnable: true,
+          onCreate: (data) => {
+            const dialogModel = data.dialog;
+            const dialogId = dialogModel.id;
+            const opener = dialogModel.opener;
+            const openerElement = opener ? opener.element : null;// DATA-APIによってダイアログを開いた要素
+            const dialogParams = dialogModel.params;//extraなパラメータ格納用オブジェクト
+
+            const selectedPerson = friends.find(data => data.id == dialogParams.personId);
+
+            // context内の同名のプロパティが初期値としてあてがわれる
+
+            dialogModel.context = {
+              // modelには、i18リソースを使うときのプレースホルダ変数を格納できる。リソース名は'label-title'
+              'label-title': { model: { 'user-name': selectedPerson.name } },
+              'userResidence': 2,
+            };
+          },
+
+          onApply: (data) => {
+            const dialogModel = data.dialog;
+            //const mgr = dialogModel.dialogManager;
+            const dialogId = dialogModel.id;
+            const opener = dialogModel.opener;
+            const context = dialogModel.context;
+            const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+            dialogInstance.hide();
+            // 明示的にreturnすると、その値を返すことができる
+            return { userResidence: context['userResidence'] };
+
+          },
+          onCancel: (data) => {
+            // ダイアログがキャンセルされたときに、呼び出される
+            const dialogModel = data.dialog;
+            //const mgr = dialogModel.dialogManager;
+            const dialogId = dialogModel.id;
+            const opener = dialogModel.opener;
+            const context = dialogModel.context;//ダイアログの入力状態
+            const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
+            dialogInstance.hide();
+          },
+        });
+        dialogMgr.activate();// ダイアログ関連のイベント登録
+        BSN.initCallback();// Bootstrap4のDataAPIを有効化
+
+        dialogMgr.showDialog('dlg-test-9');
+
+        const mainDialogModel = dialogMgr.getDialogModelById('dlg-test-9');
+        const mainDialogEle = mainDialogModel.element;
+
+        const subDialogModel = dialogMgr.getDialogModelById('dlg-test-9-1');
+        const subDialogEle = subDialogModel.element;
+
+        subDialogEle.addEventListener('shown.bs.modal', (e) => {
+
+          const btnCancel = subDialogEle.querySelector('[data-dlg-action="cancel"]');
+          btnCancel.click();
+        });
+
+        mainDialogEle.addEventListener('shown.bs.modal', (e) => {
+          setTimeout(() => {
+            const btnOK = mainDialogEle.querySelector('[data-dlg-action="apply"]');
+            btnOK.click();
+          }, 500);
+        });
+      }
+    );//test
+
   });// describe
   describe('DATA-API auto-focus', () => {
 

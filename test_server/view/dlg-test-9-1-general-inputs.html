@@ -1,0 +1,23 @@
+<div class="modal-header">
+    <h5 class="modal-title">#{label-title}</h5>
+    <button type="button" class="close" data-dlg-action="cancel" data-dismiss="modal">
+        <span>&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <form>
+        <span>#{label-comment}</span>
+        <!-- residence -->
+        <div class="form-group">
+            <label class="col-form-label">#{label-residence}</label>
+            <select data-dlg-input-type="number" data-dlg-prop="userResidence" data-dlg-ref="prefectures"
+                    class="form-control">
+            </select>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" data-dlg-action="apply">#{label-ok}</button>
+    <button type="button" class="btn btn-secondary" data-dlg-action="cancel">#{label-cancel}</button>
+    </button>
+</div>

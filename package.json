@@ -1,6 +1,6 @@
 {
   "name": "data-dlg",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "data-dlg is data-binder for bsn boosted Bootstrap4 modal dialog.",
   "main": "lib/data-dlg.js",
   "scripts": {
