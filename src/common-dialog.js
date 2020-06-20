@@ -108,7 +108,6 @@ export default class CommonConfirmationDialog {
     });
   }
 
-
   onDialogCreate(data) {
     const { type } = this.opt;
     const context = {
@@ -169,7 +168,6 @@ export default class CommonConfirmationDialog {
     mapBoolean('neutral', 'isNeutral');
     mapBoolean('close', 'hasClose');
 
-
     const mapRes = (optRes, contextRes) => {
       if (this.opt.res[optRes]) {
         context[contextRes] = this.dialogMgr.t(this.opt.res[optRes]);
@@ -188,7 +186,6 @@ export default class CommonConfirmationDialog {
     mapClass('positive', 'data-dlg-common-confirmation-class-positive');
     mapClass('negative', 'data-dlg-common-confirmation-class-negative');
     mapClass('neutral', 'data-dlg-common-confirmation-class-neutral');
-
 
     data.dialog.context = context;
   }

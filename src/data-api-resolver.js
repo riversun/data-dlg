@@ -26,7 +26,6 @@ export function getAllMultipleInputEles(parentEle, opt) {
   return parentEle.querySelectorAll(`${strSearchTag}[data-dlg-multi-prop${strSearchValue}]`);
 }
 
-
 function getAllEles(parentEle, opt) {
   const searchTag = (opt.tag) ? opt.tag : null;
   const searchValue = (opt.val !== null && typeof opt.val !== 'undefined') ? opt.val : null;
@@ -52,7 +51,6 @@ export function getMutiInputPropertyName(dlgInputEle) {
   return dlgInputPropName;
 }
 
-
 /**
  * 入力Elementに'data-dlg-input-type'属性で指定されたプロパティの型を返す
  * @param dlgInputEle
@@ -75,7 +73,6 @@ export function getDataRefPropName(dlgInputEle) {
   const result = dlgInputEle.getAttribute(DATA_DLG_REF);
   return result;
 }
-
 
 export function getInputDataRefIdPropName(dlgInputEle) {
 // 選択値にするプロパティ名

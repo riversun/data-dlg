@@ -10,7 +10,6 @@ import {
 } from './data-api-resolver';
 import doPopulateDatePickerToContext from './bind-from-view-datepicker-to-context';
 
-
 /**
  * 入力Elementから値を取得し指定された型変換を施した結果を返す
  * @param dlgInputEle
@@ -36,7 +35,6 @@ function getTypedValue(dlgInputEle) {
   }
   throw Error(`Unknown type:${inputPropertyType} rawValue:${rawValue} typeOf(rawValue):${typeOf(rawValue)}`);
 }
-
 
 /**
  * 指定した要素のDATA API属性に従い値（単一）を取得する
@@ -122,7 +120,6 @@ export function getMultiValuesOf(dlgMultiPropHolderEle) {
 export function doCopyDialogInputToContext(dialogModel) {
   const dialogEle = dialogModel.element;
   const { context } = dialogModel;
-
 
   // ダイアログのうちバインディング（入力用コントロールと、入力値を格納するプロパティのひもづけ）が指定された要素を検索する
   const dlgPropInputEles = getAllSingleInputEles(dialogEle);

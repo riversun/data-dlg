@@ -70,7 +70,6 @@ export default class DialogManager {
     return this.dlgConfirmation.getNextConfirmationDialogId();
   }
 
-
   /**
    * ダイアログ用のテンプレートHTMLをurlから読み込む設定にした場合、
    * ダイアログが開くタイミングでそれをよみこむか否かをセットする
@@ -228,7 +227,6 @@ export default class DialogManager {
 
       const htmlTemplateFromUrl = !this.loadTemplateOnOpen ? await this.loadResourceFromUrl(url, 'text', `htmlTemplateFromUrl:${url} for dialog:${dialogId}`) : null;
 
-
       const dialogModel = {
         id: dialogId, // dialog id which is same as dialog DOM element
         instance: bsnModalDialogInstance, // bootstrap.native's modal dialog instance
@@ -288,7 +286,6 @@ export default class DialogManager {
     });
   }
 
-
   /**
    * 生成したダイアログを削除する
    * @param dialogId
@@ -307,7 +304,6 @@ export default class DialogManager {
     return false;
   }
 
-
   /**
    * dialogIdで(bsnの)ダイアログインスタンスを取得する
    * @param dialogId
@@ -320,7 +316,6 @@ export default class DialogManager {
   getNotificatorById(dialogId) {
     return this.dialogNotificators.get(dialogId);
   }
-
 
   /**
    * onCancelを呼び出す
@@ -349,7 +344,6 @@ export default class DialogManager {
     }
     return result;
   }
-
 
   /**
    * 属性に[data-dlg-action]が指定されたアクションボタン（「適用」「更新」など）に
@@ -436,7 +430,6 @@ export default class DialogManager {
     }
   }
 
-
   /**
    * ダイアログを表示する
    * ・opener経由ではなく、手動でダイアログを表示する
@@ -478,7 +471,6 @@ export default class DialogManager {
       await callbacks.onCreate({ action: 'create', dialog: dialogModel });
     }
   }
-
 
   /**
    * ダイアログを（再）表示する
@@ -530,7 +522,6 @@ Or if you have an external dialog set to a value, are you giving it a "data-dlg-
         // optionで直接"context"が指定されていたらそれを優先する
         const dataPopulatedHTML = this.templateFill.populateModelIntoTemplate(templateHTML, safeOpt.context ? safeOpt.context : context);
         dialogInstance.setContent(dataPopulatedHTML);// ここではじめてダイアログ内のコンテンツHTMLがセットされる
-
 
         const dialogEle = dialogModel.element;
         const dataDialogAttrs = dialogEle.querySelectorAll('[data-dlg]');
@@ -646,7 +637,6 @@ Or if you have an external dialog set to a value, are you giving it a "data-dlg-
     }
   }
 
-
   /**
    * data-dlg属性のついた要素に自動的にダイアログを開くクリックイベントを設定する
    */
@@ -684,7 +674,6 @@ Or if you have an external dialog set to a value, are you giving it a "data-dlg-
       // 開き元のダイアログ(openerDialog)に戻りたいフラグとそのdialogIdが指定されていた場合、
       // 開き元のダイアログに戻る
       const needToBackOpenerDialog = wantToBackOpenerDialog && backToDialogId;
-
 
       // data-dlgで指定したダイアログidが存在したら、
       // dlgOpenerをクリックしたとき、そのダイアログを表示するようにする

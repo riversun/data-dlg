@@ -149,7 +149,6 @@ export function doShowMultiPropContextToDialogInput(dialogModel, opt) {
     } else if (dlgPropMultiInputEle.tagName.toLowerCase() === 'div') {
       // 複数選択の結果をチェックボックスのチェック状態に反映する
 
-
       // 入力コントロールの入力値がひもづけられるプロパティ名
       const dlgMultiInputPropName = getMutiInputPropertyName(dlgPropMultiInputEle);
 

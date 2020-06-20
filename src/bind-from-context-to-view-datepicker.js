@@ -1,7 +1,6 @@
 import flatpickr from 'flatpickr';
 import { Japanese } from 'flatpickr/dist/l10n/ja';
 
-
 /**
  * Contextに格納された Date値をView(flatpickrによるdatetime picker対応input要素)に表示する
  * @param dialogModel
@@ -12,7 +11,6 @@ export default function doPopulateContextToDatePicker(dialogModel, opt) {
   const dialogEle = dialogModel.element;
   const { context } = dialogModel;
   const { locale } = opt;
-
 
   // 日付ピッカー
   const dateInputEles = dialogEle.querySelectorAll('[data-dlg-input-type=date]');

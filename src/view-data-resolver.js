@@ -22,7 +22,6 @@ export default function getListingInputDispDataMap(dialogModel, targetEle, opt) 
   const refDispPropName = getInputDataRefDispPropName(targetEle);
   const customSrc = context[dispResourcePropName];
 
-
   // i18resに格納されたプロパティ群
   const dispStringsFromI18Res = i18res.t(dispResourcePropName);
   // 自前で指定したプロパティ群
