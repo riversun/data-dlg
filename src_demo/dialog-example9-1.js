@@ -54,12 +54,46 @@ export default async function createDialog(dialogMgr, opt) {
       const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
       dialogInstance.hide();
     },
-    onResume: (data) => {
-      const resumeData = data.resume;
-      const openerKey = resumeData.openerKey;
-      const openedDialogModel = resumeData.dialogModel;
+    onAny: async (data) => {
+      const dialogModel = data.dialog;
+      const params = dialogModel.params;
+      //const person = params.person;
+      const opener = dialogModel.opener;
+      const dialogInstance = dialogModel.instance;
 
-      //console.log(resumeData.dialogModel.id + "からかえってきた" + openerKey + "のデータ" + openedDialogModel.context.friend);
+
+
+
+      // 通常は値をreturnすればそれがresultとして、dialog-example9側に渡されるが、
+      // なにかのアクションを待ちたい場合に、 promiseを返しても良い
+      return new Promise(async (resolve) => {
+        if (data.action === 'delete') {
+
+          // 「本当に削除して良いか」ダイアログを開く
+          const opt = {
+            type: 'yesno',
+            title: 'Deletion ?',
+            message: 'You really want to delete?',
+          };
+          const result = await dialogMgr.showConfirmation(opt);
+
+          if (result === 'positive') {
+            // resolve(値：値は省略するとresultがundefinedになって返る)することで
+            // onAnyのdeleteとしてこのダイアログが閉じられdialog-example9に戻る
+            dialogInstance.hide();
+            resolve();
+
+          } else {
+            // YES/NOダイアログでキャンセルされた場合は、
+            // まだこのダイアログに居座るため、onAny(delete)をdialog-example9にもどらないようにする
+            // そのため、resolveでcancel:trueにする
+            dialogInstance.show();
+            resolve({cancel:true});
+          }
+
+        }
+      });// promise
+
     }
 
   });

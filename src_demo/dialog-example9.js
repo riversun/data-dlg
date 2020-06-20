@@ -42,13 +42,18 @@ export default async function createDialog(dialogMgr, opt) {
       const dialogParams = dialogModel.params;//extraなパラメータ格納用オブジェクト
 
       const dlgResult = await dialogMgr.showDialog('dlg-example9-1', { params: { personId: context.personId } });
+      console.log(`external dialog result action="${dlgResult.action}"`);
       if (dlgResult.action === 'apply') {
         dialogInstance.hide();
         const selectedUserResidence = dlgResult.result.userResidence;
         // 適用されたのでダイアログを閉じた状態のままおわり
-      } else {
+      }
+      else if (dlgResult.action === 'cancel') {
         // 適用されなかったので、ふたたびこのダイアログを開いてユーザー入力を促す
         dialogInstance.show();
+      }else if (dlgResult.action === 'delete') {
+        // dialog-example9-1で削除が「実行済」なので、このダイアログを閉じる
+        dialogInstance.hide();
       }
 
     },
@@ -62,13 +67,7 @@ export default async function createDialog(dialogMgr, opt) {
       const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
       dialogInstance.hide();
     },
-    onResume: (data) => {
-      const resumeData = data.resume;
-      const openerKey = resumeData.openerKey;
-      const openedDialogModel = resumeData.dialogModel;
 
-
-    }
 
   });
 }

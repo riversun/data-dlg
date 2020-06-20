@@ -329,9 +329,11 @@ export default class DialogManager {
    */
   async doCallbackCancel(actionName, dialogModel) {
     const callbacks = dialogModel.callback;
+    let result = null;
     if (callbacks.onCancel) {
-      await callbacks.onCancel({ action: actionName, dialog: dialogModel });
+      result = await callbacks.onCancel({ action: actionName, dialog: dialogModel });
     }
+    return result;
   }
 
   /**
@@ -341,9 +343,11 @@ export default class DialogManager {
    */
   async doCallbackAny(actionName, dialogModel) {
     const callbacks = dialogModel.callback;
+    let result = null;
     if (callbacks.onAny) {
-      await callbacks.onAny({ action: actionName, dialog: dialogModel });
+      result = await callbacks.onAny({ action: actionName, dialog: dialogModel });
     }
+    return result;
   }
 
 
