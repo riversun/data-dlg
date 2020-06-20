@@ -452,7 +452,8 @@ export default class DialogManager {
       if (isTruthy(safeOpt.context) && isTruthy(dialogModel.context)) {
         mergeDeeply({ op: 'overwrite-merge', object1: dialogModel.context, object2: safeOpt.context });
       }
-
+      // opener経由のオープンではないので、openerは明示的にnull
+      dialogModel.opener = null;
       await this.openDialogInternally(dialogModel);
       this.refreshDialog(dialogId);
     }
