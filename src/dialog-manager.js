@@ -339,10 +339,10 @@ export default class DialogManager {
    * @param actionName
    * @param dialogModel
    */
-  doCallbackAny(actionName, dialogModel) {
+  async doCallbackAny(actionName, dialogModel) {
     const callbacks = dialogModel.callback;
     if (callbacks.onAny) {
-      callbacks.onAny({ action: actionName, dialog: dialogModel });
+      await callbacks.onAny({ action: actionName, dialog: dialogModel });
     }
   }
 
