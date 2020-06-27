@@ -49,7 +49,6 @@ export function getSingleDispOf(dlgPropInputEle, rawValue) {
 export function doShowContextToDialogInput(dialogModel, opt) {
   const dialogEle = dialogModel.element;
   const { context } = dialogModel;
-
   // data-dlg-propのハンドリング
   // ダイアログのうちバインディング（入力用コントロールと、入力値を格納するプロパティのひもづけ）が指定された要素を検索する
   const dlgPropInputEles = getAllSingleInputEles(dialogEle);

@@ -538,7 +538,7 @@ Or if you have an external dialog set to a value, are you giving it a "data-dlg-
         this.doHandleHiddenEles(dialogModel);
 
         // contextプロパティをダイアログにある[data-dlg-prop]属性のついたinput要素のvalueにセットする
-        doShowContextToDialogInput(dialogModel, { locale: this.locale });
+        doShowContextToDialogInput(dialogModel, { locale: this.locale, datePickerOpt: dialogModel.datePickerOpt });
 
         // contextプロパティをダイアログにある[data-dlg-multi-prop]属性のついたinput要素のvalueにセットする
         doShowMultiPropContextToDialogInput(dialogModel, { i18res: this.i18res });

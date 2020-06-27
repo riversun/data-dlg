@@ -6,7 +6,7 @@
   margin-top: 10px;
 }
 
-.custom-radio-button{
+.custom-radio-button {
   margin-top: 10px;
 }
 
@@ -14,3 +14,90 @@
 @import "../../node_modules/flatpickr/dist/themes/material_blue.css";
 //@import "../../node_modules/flatpickr/dist/themes/dark.css";
 
+
+
+// 時刻選択などの矢印を太くする場合
+//$timePickerHeight: 80px;
+//$timePickerArrowInner: 16px;
+//$timePickerArrowOuter: 40px;
+//$timePickerPaddingRight: 40px;
+//$timePickerFontSize: 30px;
+//.flatpickr-time input.flatpickr-hour {
+//  font-weight: bold;
+//}
+//.flatpickr-time input.flatpickr-minute,
+//.flatpickr-time input.flatpickr-second {
+//  font-weight: bold;
+//}
+//.flatpickr-time input {
+//  background: transparent;
+//  -webkit-box-shadow: none;
+//  box-shadow: none;
+//  border: 0;
+//  border-radius: 0;
+//  text-align: center;
+//  margin: 0;
+//  padding: 0;
+//  padding-right: $timePickerPaddingRight;
+//  height: inherit;
+//  line-height: inherit;
+//  color: #393939;
+//  font-size: $timePickerFontSize;
+//  position: relative;
+//  -webkit-box-sizing: border-box;
+//  box-sizing: border-box;
+//  -webkit-appearance: textfield;
+//  -moz-appearance: textfield;
+//
+//}
+//
+//.flatpickr-time {
+//  text-align: center;
+//  outline: 0;
+//  display: block;
+//  height: 0;
+//  line-height: $timePickerHeight;
+//  max-height: $timePickerHeight;
+//  -webkit-box-sizing: border-box;
+//  box-sizing: border-box;
+//  overflow: hidden;
+//  display: -webkit-box;
+//  display: -webkit-flex;
+//  display: -ms-flexbox;
+//  display: flex;
+//}
+//
+//.flatpickr-time .numInputWrapper {
+//  -webkit-box-flex: 1;
+//  -webkit-flex: 1;
+//  -ms-flex: 1;
+//  flex: 1;
+//  width: 40%;
+//  height: $timePickerHeight;
+//  float: left;
+//}
+//
+//.numInputWrapper span.arrowUp {
+//  top: 0;
+//  width: $timePickerArrowOuter;
+//  border-bottom: 0;
+//}
+//
+//.numInputWrapper span.arrowUp:after {
+//  border-left: $timePickerArrowInner solid transparent;
+//  border-right: $timePickerArrowInner solid transparent;
+//  border-bottom: $timePickerArrowInner solid rgba(57, 57, 57, 0.6);
+//  top: 26%;
+//}
+//
+//.numInputWrapper span.arrowDown {
+//  top: 50%;
+//  width: $timePickerArrowOuter;
+//}
+//
+//.numInputWrapper span.arrowDown:after {
+//  border-left: $timePickerArrowInner solid transparent;
+//  border-right: $timePickerArrowInner solid transparent;
+//  border-top: $timePickerArrowInner solid rgba(57, 57, 57, 0.6);
+//  top: 40%;
+//}

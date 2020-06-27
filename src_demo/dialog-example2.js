@@ -19,6 +19,10 @@ export default async function createDialog(dialogMgr, opt) {
       const openerElement = opener.element;// DATA-APIによってダイアログを開いた要素
       const dialogParams = dialogModel.params;//extraなパラメータ格納用オブジェクト
 
+      // dialogModelにdatePickerOptオブジェクトをセットし、その中身にはプロパティ名をキーにしてflatpickr用のオプションをセットできる
+      dialogModel.datePickerOpt = { userWakeUpTime: { minuteIncrement: 30,disableMobile:true } };
+
+
       // i18resで指定されている場合は同名のラベル
       data.dialog.context = {
         // modelには、i18リソースを使うときのプレースホルダ変数を格納できる。リソース名は'label-title'
@@ -27,6 +31,18 @@ export default async function createDialog(dialogMgr, opt) {
       const copyToPropNames = ['userBirthday', 'userStartTime', 'userWakeUpTime'];
       dialogMgr.bindModelToContext(
         userData, dialogModel.context, copyToPropNames);
+
+
+    },
+    onShow:(data)=>{
+
+
+      // time pickerを選択させない
+      const eleHour=document.querySelector('.flatpickr-hour');
+      eleHour.disabled=true;
+
+      const eleMinutes=document.querySelector('.flatpickr-minute');
+      eleMinutes.disabled=true;
 
 
     },

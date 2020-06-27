@@ -1,5 +1,6 @@
 import flatpickr from 'flatpickr';
 import { Japanese } from 'flatpickr/dist/l10n/ja';
+import mergeDeeply from 'merge-deeply';
 
 /**
  * Contextに格納された Date値をView(flatpickrによるdatetime picker対応input要素)に表示する
@@ -19,7 +20,7 @@ export default function doPopulateContextToDatePicker(dialogModel, opt) {
     // https://flatpickr.js.org/options/
     //
     const propName = dateInputEle.getAttribute('data-dlg-prop');
-
+    // fpOpt.disableMobile='true';//モバイルモードのときにスマホnativeなpickerをだしたい場合はコメントアウト
     // contextに格納されているdateオブジェクト
     const date = context[propName];
     const fpOpt = {};
@@ -30,8 +31,12 @@ export default function doPopulateContextToDatePicker(dialogModel, opt) {
     if (date) {
       fpOpt.defaultDate = date;
     }
-    // fpOpt.disableMobile='true';//モバイルモードのときにスマホnativeなpickerをだしたい場合はコメントアウト
-
+    // flatpckrに外部からオプションをセット
+    const { datePickerOpt } = dialogModel;
+    const flatPickrUserOpt = datePickerOpt ? datePickerOpt[propName] : null;
+    if (flatPickrUserOpt) {
+      mergeDeeply({ op: 'overwrite-merge', object1: fpOpt, object2: flatPickrUserOpt });
+    }
     flatpickr(dateInputEle, fpOpt);
   }
 
@@ -54,6 +59,12 @@ export default function doPopulateContextToDatePicker(dialogModel, opt) {
     if (date) {
       fpOpt.defaultDate = date;
     }
+    // flatpckrに外部からオプションをセット
+    const { datePickerOpt } = dialogModel;
+    const flatPickrUserOpt = datePickerOpt ? datePickerOpt[propName] : null;
+    if (flatPickrUserOpt) {
+      mergeDeeply({ op: 'overwrite-merge', object1: fpOpt, object2: flatPickrUserOpt });
+    }
     flatpickr(timeInputEle, fpOpt);
   }
 
@@ -74,6 +85,12 @@ export default function doPopulateContextToDatePicker(dialogModel, opt) {
     }
     if (date) {
       fpOpt.defaultDate = date;
+    }
+    // flatpckrに外部からオプションをセット
+    const { datePickerOpt } = dialogModel;
+    const flatPickrUserOpt = datePickerOpt ? datePickerOpt[propName] : null;
+    if (flatPickrUserOpt) {
+      mergeDeeply({ op: 'overwrite-merge', object1: fpOpt, object2: flatPickrUserOpt });
     }
     flatpickr(dateTimeInputEle, fpOpt);
   }
