@@ -370,7 +370,7 @@ export default class DialogManager {
             if (callbacks.onApply) {
               // コールバック
               const result = await callbacks.onApply({ action: 'apply', dialog: dialogModel });
-              if (dialogNotificator) {
+              if (dialogNotificator && result !== undefined) { // return; の場合は返したことにしない
                 dialogNotificator.notify({ action: 'apply', result });
               }
             }
@@ -378,14 +378,14 @@ export default class DialogManager {
         } else if (actionName === 'cancel') {
           this.evh.addEventListener(dlgActionEle, 'click', async () => {
             const result = await this.doCallbackCancel(actionName, dialogModel);
-            if (dialogNotificator) {
+            if (dialogNotificator && result !== undefined) {
               dialogNotificator.notify({ action: 'cancel', result });
             }
           }, { listenerName: `click-listener-for-cancel-dlg-${dialogId}` });
         } else if (actionName) {
           this.evh.addEventListener(dlgActionEle, 'click', async () => {
             const result = await this.doCallbackAny(actionName, dialogModel);
-            if (dialogNotificator) {
+            if (dialogNotificator && result !== undefined) {
               dialogNotificator.notify({ action: actionName, result });
             }
           }, { listenerName: `click-listener-for-${actionName}-dlg-${dialogId}` });
@@ -402,7 +402,7 @@ export default class DialogManager {
           if (callbacks.onApply) {
             // コールバック
             const result = await callbacks.onApply({ action: 'apply', dialog: dialogModel });
-            if (dialogNotificator) {
+            if (dialogNotificator && result !== undefined) {
               dialogNotificator.notify({ action: 'apply', result });
             }
           }

@@ -2476,6 +2476,7 @@ describe('DialogManager', () => {
             const context = dialogModel.context;//ダイアログの入力状態
             const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
             dialogInstance.hide();
+            return {}; // returnableでキャンセルをしたときにも、戻り値を受け取りたい場合には return;ではなくreturn {} する。
           },
         });
         dialogMgr.activate();// ダイアログ関連のイベント登録
@@ -2607,6 +2608,7 @@ describe('DialogManager', () => {
             const context = dialogModel.context;//ダイアログの入力状態
             const dialogInstance = dialogModel.instance;//ダイアログのインスタンス
             dialogInstance.hide();
+            return {}; // returnableでキャンセルをしたときにも、戻り値を受け取りたい場合には return;ではなくreturn {} する。
           },
           onAny: async (data) => {
             const dialogModel = data.dialog;
@@ -2632,7 +2634,7 @@ describe('DialogManager', () => {
                   // resolve(値：値は省略するとresultがundefinedになって返る)することで
                   // onAnyのdeleteとしてこのダイアログが閉じられdialog-example9に戻る
                   dialogInstance.hide();
-                  resolve();
+                  resolve({});// return;ではだめで、何らかtruthyになるように　「{}」 を返す
 
                 } else {
                   // YES/NOダイアログでキャンセルされた場合は、

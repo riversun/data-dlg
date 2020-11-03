@@ -12,6 +12,7 @@ import createDialog7_1 from "./dialog-example7-1.js";
 import createDialog8 from "./dialog-example8.js";
 import createDialog9 from "./dialog-example9.js";
 import createDialog9_1 from "./dialog-example9-1.js";
+import createDialog10 from "./dialog-example10.js";
 
 export default class AppMain {
   constructor() {
@@ -67,6 +68,13 @@ We're sorry for the inconvenience, but please give us enough time to reload your
     }
     this.setupDemoCommonDialogs();
     this.render();
+
+    // showDialogで開いて、戻り値でダイアログの結果を受け取る
+    const btnExample10 = document.querySelector('#open-with-showdialog');
+    btnExample10.addEventListener('click', async (evt) => {
+      const dialogResult = await this.dialogMgr.showDialog('dlg-example10', {});
+      console.log('ダイアログ実行結果', dialogResult);
+    });
   }
 
   setupDemoCommonDialogs() {
@@ -138,8 +146,9 @@ We're sorry for the inconvenience, but please give us enough time to reload your
     await createDialog7(this.dialogMgr);
     await createDialog7_1(this.dialogMgr);
     await createDialog8(this.dialogMgr, { userData: this.userData });
-    await createDialog9(this.dialogMgr,{ friends: this.friends});
-    await createDialog9_1(this.dialogMgr,{ friends: this.friends});
+    await createDialog9(this.dialogMgr, { friends: this.friends });
+    await createDialog9_1(this.dialogMgr, { friends: this.friends });
+    await createDialog10(this.dialogMgr, { userData: this.userData });
     this.dialogMgr.activate();
   }
 
