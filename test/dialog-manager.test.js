@@ -1,8 +1,7 @@
 import DialogManager from "../src/dialog-manager";
 import { typeOf } from "../src/common-utils";
-import bsn from "../src_bsn_2.0.27/bootstrap-native-v4.js";//"bootstrap.native/dist/bootstrap-native-v4";
-
-import { SERVER_ENDPOINT, INNER_HTML, loadResourceFromUrl, getFriends, getUserData } from "./test-common.js";
+import bsn from "../src_bsn_2.0.27/bootstrap-native-v4.js"; //"bootstrap.native/dist/bootstrap-native-v4";
+import { getFriends, getUserData, INNER_HTML, loadResourceFromUrl, SERVER_ENDPOINT } from "./test-common.js";
 
 function createDlgMgr() {
 
@@ -2198,7 +2197,8 @@ describe('DialogManager', () => {
     );//test
   });// describe
   describe('showDialog()', () => {
-    test('[dialog1]showDialog', async (done) => {
+    test('[dialog1]showDialog (context variable keeps each time)', async (done) => {
+        let counter = 0;
         const userData = getUserData();
         document.body.innerHTML = INNER_HTML;
         const dialogMgr = createDlgMgr();
@@ -2219,9 +2219,15 @@ describe('DialogManager', () => {
             const dialogCallback = dialogModel.callback;
             const openerElement = dialogOpener ? dialogOpener.element : null;// DATA-APIによってダイアログを開いた要素
 
+            counter++;
+            console.log(`counter`, counter, dialogContext.exampleKey);
 
+            // showDialogのままだと、2回目の context:{} にかかわらず、１回目の値を保持してしまう
             expect(dialogContext.exampleKey).toBe('exampleValue');
-            done();
+
+            if (counter == 2) {
+              done();
+            }
 
           },
           onApply: (data) => {
@@ -2233,7 +2239,62 @@ describe('DialogManager', () => {
         dialogMgr.activate();// ダイアログ関連のイベント登録
         BSN.initCallback();// Bootstrap4のDataAPIを有効化
 
-        dialogMgr.showDialog('dlg-test-1', { context: { exampleKey: 'exampleValue' } });
+        // 1回目開く
+        await dialogMgr.showDialog('dlg-test-1', { context: { exampleKey: 'exampleValue' } });
+
+        // 2回目開く
+        await dialogMgr.showDialog('dlg-test-1', { context: {} });
+
+      }
+    );//test
+
+    test('[dialog1]showDialog (forget context variable keeps each time)', async (done) => {
+        let counter = 0;
+        const userData = getUserData();
+        document.body.innerHTML = INNER_HTML;
+        const dialogMgr = createDlgMgr();
+        await dialogMgr.setResourcesFromUrl(`${SERVER_ENDPOINT}/res/strings.json`);
+        // Setup condition input dialog
+        await dialogMgr.createDialog({
+          id: 'dlg-test-1',
+          url: `${SERVER_ENDPOINT}/view/dlg-test-1-general-inputs.html`,
+          onCreate: (data) => {
+            const dialogModel = data.dialog;
+            const dialogId = dialogModel.id;
+            const dialogTemplate = dialogModel.template;
+            const dialogElement = dialogModel.element;
+            const dialogInstance = dialogModel.instance;//BSNダイアログのインスタンス
+            const dialogContext = dialogModel.context;
+            const dialogOpener = dialogModel.opener;
+            const dialogParams = dialogModel.params;//extraなパラメータ格納用オブジェクト
+            const dialogCallback = dialogModel.callback;
+            const openerElement = dialogOpener ? dialogOpener.element : null;// DATA-APIによってダイアログを開いた要素
+
+            counter++;
+            console.log(`counter`, counter, dialogContext.exampleKey);
+            // showDialogのままだと、2回目の context:{} にかかわらず、１回目の値を保持してしまう
+            if (counter === 1) expect(dialogContext.exampleKey).toBe('exampleValue');
+            if (counter === 2) expect(dialogContext.exampleKey).toBeFalsy();
+            if (counter == 2) {
+              done();
+            }
+
+
+          },
+          onApply: (data) => {
+          },
+          onCancel: (data) => {
+          },
+
+        });//createDialog
+        dialogMgr.activate();// ダイアログ関連のイベント登録
+        BSN.initCallback();// Bootstrap4のDataAPIを有効化
+
+        // 1回目開く
+        await dialogMgr.showDialog('dlg-test-1', { context: { exampleKey: 'exampleValue' } });
+
+        // 2回目開く
+        await dialogMgr.showDialog('dlg-test-1', { no_Merge: true, context: {} });
 
       }
     );//test

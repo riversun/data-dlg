@@ -3,10 +3,7 @@ import EventListenerHelper from 'event-listener-helper';
 import mergeDeeply from 'merge-deeply';
 import { AjaxClient } from 'ajax-client';
 import I18nice from 'i18nice';
-import {
-  isNotUndefined,
-  isTruthy, isFalsy, typeOf,
-} from './common-utils';
+import { isFalsy, isNotUndefined, isTruthy, typeOf } from './common-utils';
 import DlgmgrTemplateFiller from './dlgmgr-template-filler';
 import { doCopyDialogInputToContext } from './bind-from-view-to-context';
 import { doShowContextToDialogInput, doShowMultiPropContextToDialogInput } from './bind-from-context-to-view';
@@ -443,11 +440,20 @@ export default class DialogManager {
     const dialogModel = this.getDialogModelById(dialogId);
     const dialogNotificator = this.getNotificatorById(dialogId);
     if (dialogModel) {
-      mergeDeeply({ op: 'overwrite-merge', object1: dialogModel, object2: safeOpt });
+      if (safeOpt.no_Merge === true) {
+        // - no_Mergeオプションが指定されていた場合は、 overwirte-mergeはしない
+        for (const key of Object.keys(safeOpt)) {
+          if (key !== 'no_merge') {
+            dialogModel[key] = safeOpt[key];
+          }
+        }
+      } else {
+        mergeDeeply({ op: 'overwrite-merge', object1: dialogModel, object2: safeOpt });
 
-      // _optがdialogModelにコピーできない問題がある場合の、workaround
-      if (isTruthy(safeOpt.context) && isTruthy(dialogModel.context)) {
-        mergeDeeply({ op: 'overwrite-merge', object1: dialogModel.context, object2: safeOpt.context });
+        // _optがdialogModelにコピーできない問題がある場合の、workaround
+        if (isTruthy(safeOpt.context) && isTruthy(dialogModel.context)) {
+          mergeDeeply({ op: 'overwrite-merge', object1: dialogModel.context, object2: safeOpt.context });
+        }
       }
       // opener経由のオープンではないので、openerは明示的にnull
       dialogModel.opener = null;
